@@ -11,5 +11,6 @@ import lombok.*;
 @Setter
 @Builder
 @Table
+
 public class User {
 }
