@@ -23,4 +23,9 @@ public class UserController{
         User createdUser = (User) userService.createUser(userDTO);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
+
+    @GetMapping("/login")
+    public String loginUser(@RequestBody UserDTO userDTO) {
+        return userService.loginUser(userDTO);
+    }
 }
