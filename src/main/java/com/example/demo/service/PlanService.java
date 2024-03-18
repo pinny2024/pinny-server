@@ -6,12 +6,12 @@ import com.example.demo.dto.plan.UpdatePlanRequest;
 import com.example.demo.repository.PlanRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@AllArgsConstructor
 @RequiredArgsConstructor
 @Service
 public class PlanService {
