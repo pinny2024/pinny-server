@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.Plan;
-import com.example.demo.dto.AddPlanRequest;
-import com.example.demo.dto.PlanResponse;
-import com.example.demo.dto.UpdatePlanRequest;
+import com.example.demo.dto.plan.AddPlanRequest;
+import com.example.demo.dto.plan.PlanResponse;
+import com.example.demo.dto.plan.UpdatePlanRequest;
 import com.example.demo.service.PlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
