@@ -22,10 +22,12 @@ public class AddQuestRequest {
 
     public Quest toEntity() {
         return Quest.builder()
+                .questId(questId)
                 .userId(userId)
                 .quest(quest)
                 .image(image)
                 .startTime(startTime)
+                .endTime(endTime)
                 .build();
     }
 }
