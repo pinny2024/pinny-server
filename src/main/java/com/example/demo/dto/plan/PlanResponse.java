@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.plan;
 
 import com.example.demo.domain.Plan;
 import com.example.demo.service.PlanService;

@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Plan;
-import com.example.demo.dto.AddPlanRequest;
-import com.example.demo.dto.UpdatePlanRequest;
+import com.example.demo.dto.plan.AddPlanRequest;
+import com.example.demo.dto.plan.UpdatePlanRequest;
 import com.example.demo.repository.PlanRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
