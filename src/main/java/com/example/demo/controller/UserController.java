@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.User;
+import com.example.demo.dto.UserDTO;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/join")
-    public ResponseEntity<User> joinUser(@RequestBody User user) {
-        User savedUser = userService.saveUser(user);
+    public ResponseEntity<User> joinUser(@RequestBody UserDTO userDTO) {
+        User savedUser = userService.saveUser(userDTO);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
