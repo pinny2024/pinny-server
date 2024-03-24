@@ -1,4 +1,7 @@
 package com.example.demo.repository;
 
-public interface IncomeRepository {
+import com.example.demo.domain.Income;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface IncomeRepository extends JpaRepository<Income, Long> {
 }
