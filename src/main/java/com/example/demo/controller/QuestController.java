@@ -4,8 +4,10 @@ import com.example.demo.domain.Plan;
 import com.example.demo.domain.Quest;
 import com.example.demo.dto.plan.AddPlanRequest;
 import com.example.demo.dto.plan.PlanResponse;
+import com.example.demo.dto.plan.UpdatePlanRequest;
 import com.example.demo.dto.quest.AddQuestRequest;
 import com.example.demo.dto.quest.QuestResponse;
+import com.example.demo.dto.quest.UpdateQuestRequest;
 import com.example.demo.service.PlanService;
 import com.example.demo.service.QuestService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,22 @@ public class QuestController {
 
         return ResponseEntity.ok()
                 .body(quests);
+    }
+
+    @GetMapping("/quests/{id}")
+    public ResponseEntity<QuestResponse> findQuest(@PathVariable("id") Long id) {
+        Quest quest = questService.findById(id);
+
+        return ResponseEntity.ok()
+                .body(new QuestResponse(quest));
+    }
+
+    @PutMapping("/quests/{id}")
+    public ResponseEntity<Quest> updateQuest(@PathVariable("id") Long id,
+                                           @RequestBody UpdateQuestRequest request) {
+        Quest updateQuest = questService.update(id, request);
+        return ResponseEntity.ok()
+                .body(updateQuest);
     }
 
     @DeleteMapping("/quests/{id}")
