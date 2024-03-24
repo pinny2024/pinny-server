@@ -25,6 +25,14 @@ public class UserService {
         user.setProfile(userDTO.getProfile());
         user.setProfile(userDTO.getProfile());
         user.setIntroduction(userDTO.getIntroduction());
-                return userRepository.save(user);
+        return userRepository.save(user);
+    }
+
+    public User login(String email, String password) {
+        User user = userRepository.findByEmail(email);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null; // 로그인 실패
     }
 }

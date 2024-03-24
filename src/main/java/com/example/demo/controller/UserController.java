@@ -22,4 +22,13 @@ public class UserController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody UserDTO userDTO) {
+        User user = userService.login(userDTO.getEmail(), userDTO.getPassword());
+        if (user != null) {
+            return "로그인 성공!";
+        } else {
+            return "이메일 또는 비밀번호가 올바르지 않습니다.";
+        }
+    }
 }
