@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/expenditures")
+@RequestMapping("/expenditures/{userId}")
 public class ExpenditureController {
 
     @Autowired
