@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "incomes")
-public class Income {
+public class Income extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +27,6 @@ public class Income {
 
     @Column(name = "content", length = 255)
     private String content;
-
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
 
     @Column(name = "image", length = 255)
     private String image;

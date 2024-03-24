@@ -19,9 +19,7 @@ public class ExpenditureController {
     @PostMapping
     public ResponseEntity<String> createExpenditure(@RequestBody Expenditure expenditure) {
 
-        if (expenditure.getCreatedAt() == null) {
-            expenditure.setCreatedAt(LocalDateTime.now());
-        }
+
 
         Expenditure savedExpenditure = expenditureService.saveExpenditure(expenditure);
         if (savedExpenditure != null) {
