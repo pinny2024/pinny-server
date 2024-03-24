@@ -1,26 +1,43 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.Expenditure;
+import com.example.demo.dto.ExpenditureDTO;
 import com.example.demo.service.ExpenditureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController
-@RequestMapping("/expenditures/{userId}")
+@RequestMapping("/expenditures/{expenditureId}")
 public class ExpenditureController {
 
     @Autowired
     private ExpenditureService expenditureService;
 
+    @GetMapping
+    public ResponseEntity<ExpenditureDTO> getExpenditureById(@PathVariable("expenditureId") Long expenditureId) {
+        Expenditure expenditure = expenditureService.getExpenditureById(expenditureId);
+        if (expenditure != null) {
+            ExpenditureDTO expenditureDTO = convertToDTO(expenditure);
+            return new ResponseEntity<>(expenditureDTO, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private ExpenditureDTO convertToDTO(Expenditure expenditure) {
+        ExpenditureDTO expenditureDTO = new ExpenditureDTO();
+        expenditureDTO.setMoney(expenditure.getMoney());
+        expenditureDTO.setCategory(expenditure.getCategory());
+        expenditureDTO.setContent(expenditure.getContent());
+        expenditureDTO.setCreatedAt(expenditure.getCreatedAt());
+        expenditureDTO.setImage(expenditure.getImage());
+        return expenditureDTO;
+    }
+
     @PostMapping
     public ResponseEntity<String> createExpenditure(@RequestBody Expenditure expenditure) {
-
-
-
         Expenditure savedExpenditure = expenditureService.saveExpenditure(expenditure);
         if (savedExpenditure != null) {
             return new ResponseEntity<>("성공적으로 값이 들어갔습니다.", HttpStatus.CREATED);
