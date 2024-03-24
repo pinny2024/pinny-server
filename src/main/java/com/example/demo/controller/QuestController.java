@@ -17,11 +17,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/quests")
+//@RequestMapping("/quests")
 public class QuestController {
     private final QuestService questService;
 
-    @PostMapping
+    @PostMapping("/quests")
     public ResponseEntity<Quest> addQuest(@RequestBody AddQuestRequest request) {
         Quest savedQuest = questService.save(request);
 
@@ -29,7 +29,7 @@ public class QuestController {
                 .body(savedQuest);
     }
 
-    @GetMapping
+    @GetMapping("/quests")
     public ResponseEntity<List<QuestResponse>> findAllQuests() {
         List<QuestResponse> quests = questService.findAll()
                 .stream()
@@ -38,5 +38,13 @@ public class QuestController {
 
         return ResponseEntity.ok()
                 .body(quests);
+    }
+
+    @DeleteMapping("/quests/{id}")
+    public ResponseEntity<Void> deleteQuest(@PathVariable long id) {
+        questService.delete(id);
+
+        return ResponseEntity.ok()
+                .build();
     }
 }

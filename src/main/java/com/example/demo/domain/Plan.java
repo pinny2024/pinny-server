@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,15 +15,15 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "plans")
-public class Plan {
+public class Plan extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private long planId;
+    private Long planId;
 
-    @Column
-    @JoinColumn(name="userId", referencedColumnName = "userId")
-    private long userId;
+    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "plan")
     private String plan;
@@ -36,7 +37,7 @@ public class Plan {
     @Column(name = "date")
     private LocalDateTime date;
 
-    public void update(long planId, long userId, String plan, String image, Boolean isChecked, LocalDateTime date) {
+    public void update(Long planId, Long userId, String plan, String image, Boolean isChecked, LocalDateTime date) {
         this.planId = planId;
         this.userId = userId;
         this.plan = plan;

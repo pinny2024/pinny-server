@@ -25,4 +25,8 @@ public class QuestService {
     public List<Quest> findAll() {
         return questRepository.findAll();
     }
+
+    public void delete(Long id) {
+        questRepository.deleteById(id);
+    }
 }

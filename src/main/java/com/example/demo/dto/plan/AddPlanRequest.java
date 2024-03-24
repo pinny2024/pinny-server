@@ -1,6 +1,7 @@
 package com.example.demo.dto.plan;
 
 import com.example.demo.domain.Plan;
+import com.example.demo.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class AddPlanRequest {
-    private long planId;
-    private long userId;
+    private Long planId;
+    private Long userId;
     private String plan;
     private String image;
     private Boolean isChecked;
