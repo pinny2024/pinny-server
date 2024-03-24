@@ -38,4 +38,13 @@ public class Quest extends BaseTimeEntity{
     @Column(name = "endTime")
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
+
+    public void update(Long questId, Long userId, String quest, String image, LocalDateTime startTime, LocalDateTime endTime) {
+        this.questId = questId;
+        this.userId = userId;
+        this.quest = quest;
+        this.image = image;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
