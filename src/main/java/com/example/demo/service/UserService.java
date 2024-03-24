@@ -49,4 +49,23 @@ public class UserService {
         }
         return false;
     }
+
+    public User updateUser(Long userId, UserDTO userDTO) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setEmail(userDTO.getEmail());
+            user.setPassword(userDTO.getPassword());
+            user.setNickname(userDTO.getNickname());
+            user.setCareer(userDTO.getCareer());
+            user.setProfile(userDTO.getProfile());
+            user.setSalary(userDTO.getSalary());
+            user.setSaving(userDTO.getSaving());
+            user.setAgeRange(userDTO.getAgeRange());
+            user.setIntroduction(userDTO.getIntroduction());
+            //user.setBadge(userDTO.getBadge());
+            return userRepository.save(user);
+        }
+        return null;
+    }
 }
