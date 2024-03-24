@@ -26,8 +26,14 @@ public class PlanService {
         return planRepository.findAll();
     }
 
+    //블로그 글 하나 조회( 데이터베이스 id 이용해 글 조회 )
+    public Plan findById(Long id){
+        return planRepository.findById(id)
+                .orElseThrow(()->new IllegalArgumentException("not found: "+id));
+    }
+
     @Transactional
-    public Plan update(long id, UpdatePlanRequest request){
+    public Plan update(Long id, UpdatePlanRequest request){
         Plan plan = planRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("not found "+id));
 

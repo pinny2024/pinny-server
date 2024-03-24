@@ -37,8 +37,17 @@ public class PlanController {
                 .body(plans);
     }
 
-    @PatchMapping
-    public ResponseEntity<Plan> updatePlan(@PathVariable long id,
+    // GET 요청이 오면 해당 id의 편지글 조회
+    @GetMapping("/plans/{id}")
+    public ResponseEntity<PlanResponse> findPlan(@PathVariable Long id) {
+        Plan plan = planService.findById(id);
+
+        return ResponseEntity.ok()
+                .body(new PlanResponse(plan));
+    }
+
+    @PutMapping("/plans/{id}")
+    public ResponseEntity<Plan> updatePlan(@PathVariable Long id,
                                            @RequestBody UpdatePlanRequest request) {
         Plan updatePlan = planService.update(id, request);
         return ResponseEntity.ok()

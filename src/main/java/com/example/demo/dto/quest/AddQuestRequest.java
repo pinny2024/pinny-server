@@ -1,6 +1,7 @@
 package com.example.demo.dto.quest;
 
 import com.example.demo.domain.Quest;
+import com.example.demo.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class AddQuestRequest {
-    private long questId;
-    private long userId;
+    private Long questId;
+    private Long userId;
     private String quest;
     private String image;
     private LocalDateTime startTime;

@@ -3,6 +3,8 @@ package com.example.demo.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -13,15 +15,15 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "quests")
-public class Quest {
+public class Quest extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private long questId;
+    private Long questId;
 
-    @Column
-    @JoinColumn(name="userId", referencedColumnName = "userId")
-    private long userId;
+    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "quest")
     private String quest;
