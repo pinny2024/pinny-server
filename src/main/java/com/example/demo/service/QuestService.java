@@ -37,7 +37,7 @@ public class QuestService {
         Quest quest = questRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("not found "+id));
 
-        quest.update(request.getQuestId(),
+        quest.update(
             request.getUserId(),
             request.getQuest(),
             request.getImage(),
