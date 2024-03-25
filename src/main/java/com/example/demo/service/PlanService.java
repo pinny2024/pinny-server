@@ -46,4 +46,6 @@ public class PlanService {
 
         return plan;
     }
+
+    public void delete(Long id) { planRepository.deleteById(id); }
 }

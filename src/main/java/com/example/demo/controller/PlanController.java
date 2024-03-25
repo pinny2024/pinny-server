@@ -53,4 +53,12 @@ public class PlanController {
         return ResponseEntity.ok()
                 .body(updatePlan);
     }
+
+    @DeleteMapping("/plans/{id}")
+    public ResponseEntity<Void> deletePlan(@PathVariable("id") Long id) {
+        planService.delete(id);
+
+        return ResponseEntity.ok()
+                .build();
+    }
 }
