@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -17,10 +19,32 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/join")
-    public ResponseEntity<User> joinUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Map<String, Object>> joinUser(@RequestBody UserDTO userDTO) {
+        // 이미 가입된 이메일인지 확인
+        if (userService.existsByEmail(userDTO.getEmail())) {
+            // 이미 가입된 이메일이라면 에러 메시지 반환
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "이미 가입된 이메일 주소입니다.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        // 새로운 사용자 정보 저장
         User savedUser = userService.saveUser(userDTO);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        if (savedUser != null) {
+            // 회원가입 성공 메시지와 함께 사용자 ID 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("userId", savedUser.getUserId());
+            response.put("message", "회원가입이 완료되었습니다. 월 5천원씩 내시면 모든 기능을 자유롭게 이용하실 수 있습니다!");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } else {
+            // 회원가입 실패 시 에러 메시지 반환
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "회원가입에 실패했습니다.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+
 
     @PostMapping("/login")
     public String login(@RequestBody UserDTO userDTO) {
