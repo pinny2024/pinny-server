@@ -83,12 +83,16 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
         User updatedUser = userService.updateUser(userId, userDTO);
         if (updatedUser != null) {
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+            // 사용자 ID가 포함된 응답 메시지 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", userId + " 계정이 수정되었습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 }
