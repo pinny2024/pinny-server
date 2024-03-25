@@ -16,6 +16,12 @@ public class UserService {
     private UserRepository userRepository;
 
     public User saveUser(UserDTO userDTO) {
+        // 이미 가입된 이메일인지 확인
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            return null; // 이미 가입된 이메일이라면 null 반환
+        }
+
+        // 새로운 사용자 정보 저장
         User user = new User();
         user.setSaving(userDTO.getSaving());
         user.setEmail(userDTO.getEmail());
@@ -25,7 +31,6 @@ public class UserService {
         user.setAgeRange(userDTO.getAgeRange());
         user.setPassword(userDTO.getPassword());
         user.setNickname(userDTO.getNickname());
-        user.setProfile(userDTO.getProfile());
         user.setProfile(userDTO.getProfile());
         user.setIntroduction(userDTO.getIntroduction());
         return userRepository.save(user);
@@ -38,9 +43,11 @@ public class UserService {
         }
         return null; // 로그인 실패
     }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
     public boolean deleteUser(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
@@ -67,5 +74,9 @@ public class UserService {
             return userRepository.save(user);
         }
         return null;
+    }
+
+    public boolean existsByEmail(String email) {
+        return true;
     }
 }
