@@ -2,7 +2,7 @@ package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
-public class ExpenditureDTO {
+public class IncomeDTO {
     private int money;
     private String category;
     private String content;

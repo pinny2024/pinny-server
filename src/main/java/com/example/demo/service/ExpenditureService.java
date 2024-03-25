@@ -11,6 +11,10 @@ public class ExpenditureService {
     @Autowired
     private ExpenditureRepository expenditureRepository;
 
+    public Expenditure getExpenditureById(Long expenditureId) {
+        return expenditureRepository.findById(expenditureId).orElse(null);
+    }
+
     public Expenditure saveExpenditure(Expenditure expenditure) {
         return expenditureRepository.save(expenditure);
     }
