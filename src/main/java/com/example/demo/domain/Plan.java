@@ -37,8 +37,7 @@ public class Plan extends BaseTimeEntity {
     @Column(name = "date")
     private LocalDateTime date;
 
-    public void update(Long planId, Long userId, String plan, String image, Boolean isChecked, LocalDateTime date) {
-        this.planId = planId;
+    public void update(Long userId, String plan, String image, Boolean isChecked, LocalDateTime date) {
         this.userId = userId;
         this.plan = plan;
         this.image = image;

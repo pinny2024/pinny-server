@@ -37,7 +37,7 @@ public class PlanService {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("not found "+id));
 
-        plan.update(request.getPlanId(),
+        plan.update(
                 request.getUserId(),
                 request.getPlan(),
                 request.getImage(),
