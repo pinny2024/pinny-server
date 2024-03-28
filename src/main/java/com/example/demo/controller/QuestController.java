@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,11 +26,14 @@ public class QuestController {
     private final QuestService questService;
 
     @PostMapping("/quests")
-    public ResponseEntity<Quest> addQuest(@RequestBody AddQuestRequest request) {
+    public ResponseEntity<Map<String, Object>> addQuest(@RequestBody AddQuestRequest request) {
         Quest savedQuest = questService.save(request);
 
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "id가 "+savedQuest.getQuestId()+"인 퀘스트가 생성되었습니다.");
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(savedQuest);
+                .body(response);
     }
 
     @GetMapping("/quests")
@@ -51,18 +56,25 @@ public class QuestController {
     }
 
     @PutMapping("/quests/{id}")
-    public ResponseEntity<Quest> updateQuest(@PathVariable("id") Long id,
+    public ResponseEntity<Map<String, Object>> updateQuest(@PathVariable("id") Long id,
                                            @RequestBody UpdateQuestRequest request) {
         Quest updateQuest = questService.update(id, request);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "id가 "+id+"인 계획이 수정되었습니다.");
+
         return ResponseEntity.ok()
-                .body(updateQuest);
+                .body(response);
     }
 
     @DeleteMapping("/quests/{id}")
-    public ResponseEntity<Void> deleteQuest(@PathVariable("id") Long id) {
+    public ResponseEntity<Map<String, Object>> deleteQuest(@PathVariable("id") Long id) {
         questService.delete(id);
 
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "id가 "+id+"인 계획이 삭제되었습니다.");
+
         return ResponseEntity.ok()
-                .build();
+                .body(response);
     }
 }
