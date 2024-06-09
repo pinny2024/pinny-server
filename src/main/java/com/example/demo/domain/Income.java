@@ -28,7 +28,6 @@ public class Income extends BaseTimeEntity{
     @Column(name = "content", length = 255)
     private String content;
 
-    @Column(name = "image", length = 255)
-    private String image;
+
 
 }

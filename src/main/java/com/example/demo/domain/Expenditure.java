@@ -29,7 +29,5 @@ public class Expenditure extends BaseTimeEntity{
     private String content;
 
 
-    @Column(name = "image", length = 255)
-    private String image;
 
 }
