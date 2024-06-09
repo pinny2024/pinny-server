@@ -37,6 +37,10 @@ public class IncomeController {
 
     @PostMapping
     public ResponseEntity<String> createIncome(@RequestBody Income income) {
+        if (income == null || income.getMoney() == 0 || income.getCategory() == null || income.getContent() == null) {
+            return new ResponseEntity<>("수입 정보를 입력해야 합니다.", HttpStatus.BAD_REQUEST);
+        }
+
         Income savedIncome = incomeService.saveIncome(income);
         if (savedIncome != null) {
             return new ResponseEntity<>("성공적으로 값이 들어갔습니다.", HttpStatus.CREATED);
