@@ -32,6 +32,10 @@ public class PlanService {
                 .orElseThrow(()->new IllegalArgumentException("not found: "+id));
     }
 
+    public List<Plan> findAllPlansByUserId(Long userId) {
+        return planRepository.findByUserId(userId);
+    }
+
     @Transactional
     public Plan update(Long id, UpdatePlanRequest request){
         Plan plan = planRepository.findById(id)

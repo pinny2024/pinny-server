@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,7 +21,7 @@ import java.util.Map;
 public class PlanController {
     private final PlanService planService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Plan> addPlan(@RequestBody AddPlanRequest request) {
         Plan savedPlan = planService.save(request);
 
@@ -31,22 +32,26 @@ public class PlanController {
                 .body(savedPlan);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<PlanResponse>> findAllPlans() {
-        List<PlanResponse> plans = planService.findAll()
+    @GetMapping("/{user_id}")
+    public ResponseEntity<List<PlanResponse>> findAllPlans(@PathVariable("user_id") Long userId) {
+        List<PlanResponse> plans = planService.findAllPlansByUserId(userId)
                 .stream()
                 .map(PlanResponse::new)
-                .toList();
-
-        return ResponseEntity.ok()
-                .body(plans);
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(plans);
     }
 
     // GET 요청이 오면 해당 id의 편지글 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<PlanResponse> findPlan(@PathVariable("id") Long id) {
+    @GetMapping("/{user_id}/{id}")
+    public ResponseEntity<PlanResponse> findPlan(@PathVariable("user_id") Long userId,
+                                                 @PathVariable("id") Long id) {
         Plan plan = planService.findById(id);
-
+        if ( plan.getPlanId() == null ) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (!plan.getUserId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok()
                 .body(new PlanResponse(plan));
     }

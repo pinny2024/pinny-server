@@ -25,7 +25,7 @@ import java.util.Map;
 public class QuestController {
     private final QuestService questService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Quest> addQuest(@RequestBody AddQuestRequest request) {
         Quest savedQuest = questService.save(request);
 
@@ -36,8 +36,8 @@ public class QuestController {
                 .body(savedQuest);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<QuestResponse>> findAllQuests() {
+    @GetMapping("/{user_id}")
+    public ResponseEntity<List<QuestResponse>> findAllQuests(@PathVariable("user_id") Long userId) {
         List<QuestResponse> quests = questService.findAll()
                 .stream()
                 .map(QuestResponse::new)
@@ -47,8 +47,9 @@ public class QuestController {
                 .body(quests);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<QuestResponse> findQuest(@PathVariable("id") Long id) {
+    @GetMapping("/{user_id}/{id}")
+    public ResponseEntity<QuestResponse> findQuest(@PathVariable("user_id") Long userId,
+                                                   @PathVariable("id") Long id) {
         Quest quest = questService.findById(id);
 
         return ResponseEntity.ok()

@@ -32,6 +32,10 @@ public class QuestService {
                 .orElseThrow(()->new IllegalArgumentException("not found: "+id));
     }
 
+    public List<Quest> findAllPlansByUserId(Long userId) {
+        return questRepository.findByUserId(userId);
+    }
+
     @Transactional
     public Quest update(Long id, UpdateQuestRequest request){
         Quest quest = questRepository.findById(id)
