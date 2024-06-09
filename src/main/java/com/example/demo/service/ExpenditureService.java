@@ -24,4 +24,8 @@ public class ExpenditureService {
     public List<Expenditure> getAllExpenditures() {
         return expenditureRepository.findAll();
     }
+
+    public List<Expenditure> getExpendituresByCategory(String category) {
+        return expenditureRepository.findByCategory(category);
+    }
 }
