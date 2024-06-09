@@ -32,7 +32,6 @@ public class IncomeController {
         incomeDTO.setCategory(income.getCategory());
         incomeDTO.setContent(income.getContent());
         incomeDTO.setCreatedAt(income.getCreatedAt());
-        incomeDTO.setImage(income.getImage());
         return incomeDTO;
     }
 
