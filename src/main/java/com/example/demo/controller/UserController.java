@@ -40,7 +40,7 @@ public class UserController {
             // 회원가입 실패 시 에러 메시지 반환
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("message", "회원가입에 실패했습니다.");
-            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
