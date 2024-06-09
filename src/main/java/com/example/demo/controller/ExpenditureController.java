@@ -37,6 +37,10 @@ public class ExpenditureController {
 
     @PostMapping
     public ResponseEntity<String> createExpenditure(@RequestBody Expenditure expenditure) {
+        if (expenditure == null || expenditure.getMoney() == 0 || expenditure.getCategory() == null || expenditure.getContent() == null) {
+            return new ResponseEntity<>("지출 정보를 입력해야 합니다.", HttpStatus.BAD_REQUEST);
+        }
+
         Expenditure savedExpenditure = expenditureService.saveExpenditure(expenditure);
         if (savedExpenditure != null) {
             return new ResponseEntity<>("성공적으로 값이 들어갔습니다.", HttpStatus.CREATED);
