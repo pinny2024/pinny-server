@@ -23,47 +23,51 @@ public class TransactionController {
     @Autowired
     private IncomeService incomeService;
 
-    @GetMapping("/{transactionId}")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
+    @GetMapping("/category/{category}")
+    public ResponseEntity<?> getTransactionsByCategory(@PathVariable String category) {
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
-        // 모든 지출 데이터
-        List<Expenditure> expenditures = expenditureService.getAllExpenditures();
+        // 카테고리에 따른 지출 데이터 필터링
+        List<Expenditure> expenditures = expenditureService.getExpendituresByCategory(category);
         for (Expenditure expenditure : expenditures) {
-            transactionDTOs.add(convertToDTO(expenditure));
+            transactionDTOs.add(convertToDTO(expenditure, "지출"));
         }
 
-        // 그 다음 모든 수입 데이터
-        List<Income> incomes = incomeService.getAllIncomes();
+        // 카테고리에 따른 수입 데이터 필터링
+        List<Income> incomes = incomeService.getIncomesByCategory(category);
         for (Income income : incomes) {
-            transactionDTOs.add(convertToDTO(income));
+            transactionDTOs.add(convertToDTO(income, "수입"));
         }
 
-        // 입력된 순서대로 반환
-        transactionDTOs.sort((t1, t2) -> t1.getCreatedAt().compareTo(t2.getCreatedAt()));
+        if (transactionDTOs.isEmpty()) {
+            String message = "카테고리 '" + category + "'에 대한 거래 내역이 없습니다.";
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
 
         return new ResponseEntity<>(transactionDTOs, HttpStatus.OK);
     }
 
-    private TransactionDTO convertToDTO(Expenditure expenditure) {
+
+
+    private TransactionDTO convertToDTO(Expenditure expenditure, String type) {
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setId(expenditure.getExpenditureId());
         transactionDTO.setMoney(expenditure.getMoney());
         transactionDTO.setCategory(expenditure.getCategory());
         transactionDTO.setContent(expenditure.getContent());
         transactionDTO.setCreatedAt(expenditure.getCreatedAt());
-        transactionDTO.setType("지출");
+        transactionDTO.setType(type);
         return transactionDTO;
     }
 
-    private TransactionDTO convertToDTO(Income income) {
+    private TransactionDTO convertToDTO(Income income, String type) {
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setId(income.getIncomeId());
         transactionDTO.setMoney(income.getMoney());
         transactionDTO.setCategory(income.getCategory());
         transactionDTO.setContent(income.getContent());
         transactionDTO.setCreatedAt(income.getCreatedAt());
-        transactionDTO.setType("수입");
+        transactionDTO.setType(type);
         return transactionDTO;
     }
 }
