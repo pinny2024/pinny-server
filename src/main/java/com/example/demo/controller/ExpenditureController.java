@@ -32,7 +32,6 @@ public class ExpenditureController {
         expenditureDTO.setCategory(expenditure.getCategory());
         expenditureDTO.setContent(expenditure.getContent());
         expenditureDTO.setCreatedAt(expenditure.getCreatedAt());
-        expenditureDTO.setImage(expenditure.getImage());
         return expenditureDTO;
     }
 

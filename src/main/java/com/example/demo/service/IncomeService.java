@@ -5,6 +5,8 @@ import com.example.demo.repository.IncomeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class IncomeService {
 
@@ -17,5 +19,8 @@ public class IncomeService {
 
     public Income saveIncome(Income income) {
         return incomeRepository.save(income);
+    }
+    public List<Income> getAllIncomes() {
+        return incomeRepository.findAll();
     }
 }
