@@ -21,22 +21,22 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-//@RequestMapping("/quests")
+@RequestMapping("/quests")
 public class QuestController {
     private final QuestService questService;
 
-    @PostMapping("/quests")
-    public ResponseEntity<Map<String, Object>> addQuest(@RequestBody AddQuestRequest request) {
+    @PostMapping("/")
+    public ResponseEntity<Quest> addQuest(@RequestBody AddQuestRequest request) {
         Quest savedQuest = questService.save(request);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "id가 "+savedQuest.getQuestId()+"인 퀘스트가 생성되었습니다.");
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "id가 "+savedQuest.getQuestId()+"인 퀘스트가 생성되었습니다.");
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(response);
+                .body(savedQuest);
     }
 
-    @GetMapping("/quests")
+    @GetMapping("/")
     public ResponseEntity<List<QuestResponse>> findAllQuests() {
         List<QuestResponse> quests = questService.findAll()
                 .stream()
@@ -47,7 +47,7 @@ public class QuestController {
                 .body(quests);
     }
 
-    @GetMapping("/quests/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<QuestResponse> findQuest(@PathVariable("id") Long id) {
         Quest quest = questService.findById(id);
 
@@ -55,19 +55,19 @@ public class QuestController {
                 .body(new QuestResponse(quest));
     }
 
-    @PutMapping("/quests/{id}")
-    public ResponseEntity<Map<String, Object>> updateQuest(@PathVariable("id") Long id,
+    @PutMapping("/{id}")
+    public ResponseEntity<Quest> updateQuest(@PathVariable("id") Long id,
                                            @RequestBody UpdateQuestRequest request) {
         Quest updateQuest = questService.update(id, request);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "id가 "+id+"인 계획이 수정되었습니다.");
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "id가 "+id+"인 계획이 수정되었습니다.");
 
         return ResponseEntity.ok()
-                .body(response);
+                .body(updateQuest);
     }
 
-    @DeleteMapping("/quests/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteQuest(@PathVariable("id") Long id) {
         questService.delete(id);
 

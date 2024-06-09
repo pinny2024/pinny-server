@@ -16,22 +16,22 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-//@RequestMapping("/plans")
+@RequestMapping("/plans")
 public class PlanController {
     private final PlanService planService;
 
-    @PostMapping("/plans")
-    public ResponseEntity<Map<String, Object>> addPlan(@RequestBody AddPlanRequest request) {
+    @PostMapping("/")
+    public ResponseEntity<Plan> addPlan(@RequestBody AddPlanRequest request) {
         Plan savedPlan = planService.save(request);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "id가 "+savedPlan.getPlanId()+"인 새 계획이 추가되었습니다.");
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "id가 "+savedPlan.getPlanId()+"인 새 계획이 추가되었습니다.");
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(response);
+                .body(savedPlan);
     }
 
-    @GetMapping("/plans")
+    @GetMapping("/")
     public ResponseEntity<List<PlanResponse>> findAllPlans() {
         List<PlanResponse> plans = planService.findAll()
                 .stream()
@@ -43,7 +43,7 @@ public class PlanController {
     }
 
     // GET 요청이 오면 해당 id의 편지글 조회
-    @GetMapping("/plans/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> findPlan(@PathVariable("id") Long id) {
         Plan plan = planService.findById(id);
 
@@ -51,19 +51,19 @@ public class PlanController {
                 .body(new PlanResponse(plan));
     }
 
-    @PutMapping("/plans/{id}")
-    public ResponseEntity<Map<String, Object>> updatePlan(@PathVariable("id") Long id,
+    @PutMapping("/{id}")
+    public ResponseEntity<Plan> updatePlan(@PathVariable("id") Long id,
                                            @RequestBody UpdatePlanRequest request) {
         Plan updatedPlan = planService.update(id, request);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "id가 "+id+"인 계획이 수정되었습니다.");
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "id가 "+id+"인 계획이 수정되었습니다.");
 
         return ResponseEntity.ok()
-                .body(response);
+                .body(updatedPlan);
     }
 
-    @DeleteMapping("/plans/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deletePlan(@PathVariable("id") Long id) {
         planService.delete(id);
 
