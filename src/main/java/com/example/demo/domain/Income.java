@@ -18,7 +18,9 @@ public class Income extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "incomeId")
     private Long incomeId;
-
+    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "user_id")
+    private Long userId;
     @Column(name = "money")
     private int money;
 

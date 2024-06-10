@@ -3,8 +3,6 @@ package com.example.demo.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -12,12 +10,16 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "expenditures")
-public class Expenditure extends BaseTimeEntity{
+public class Expenditure extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "expenditureId")
     private Long expenditureId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "money")
     private int money;
@@ -27,7 +29,4 @@ public class Expenditure extends BaseTimeEntity{
 
     @Column(name = "content", length = 255)
     private String content;
-
-
-
 }

@@ -7,7 +7,7 @@ public class ExpenditureDTO {
     private String category;
     private String content;
     private LocalDateTime createdAt;
-    private String image;
+    private Long userId;
 
     public int getMoney() {
         return money;
@@ -41,11 +41,11 @@ public class ExpenditureDTO {
         this.createdAt = createdAt;
     }
 
-    public String getImage() {
-        return image;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
