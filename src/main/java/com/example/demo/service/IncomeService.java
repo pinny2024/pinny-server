@@ -34,6 +34,10 @@ public class IncomeService {
         return incomeRepository.findByUserId(userId);
     }
 
+    public List<Income> getIncomesByUserIdAndCategory(Long userId, String category) {
+        return incomeRepository.findByUserIdAndCategory(userId, category);
+    }
+
     public void deleteIncome(Long incomeId) {
         incomeRepository.deleteById(incomeId);
     }

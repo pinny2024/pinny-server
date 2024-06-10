@@ -32,4 +32,8 @@ public class ExpenditureService {
     public List<Expenditure> getExpendituresByUserId(Long userId) {
         return expenditureRepository.findByUserId(userId);
     }
+
+    public List<Expenditure> getExpendituresByUserIdAndCategory(Long userId, String category) {
+        return expenditureRepository.findByUserIdAndCategory(userId, category);
+    }
 }

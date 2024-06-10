@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transactions")
+
 public class TransactionController {
 
     @Autowired
@@ -23,7 +23,31 @@ public class TransactionController {
     @Autowired
     private IncomeService incomeService;
 
-    @GetMapping("{userId}")
+    @GetMapping("/category/{userId}/{category}")
+    public ResponseEntity<?> getTransactionsByCategory(@PathVariable Long userId, @PathVariable String category) {
+        List<TransactionDTO> transactionDTOs = new ArrayList<>();
+
+        // 해당 사용자의 카테고리에 따른 지출 데이터 필터링
+        List<Expenditure> expenditures = expenditureService.getExpendituresByUserIdAndCategory(userId, category);
+        for (Expenditure expenditure : expenditures) {
+            transactionDTOs.add(convertToDTO(expenditure, "지출"));
+        }
+
+        // 해당 사용자의 카테고리에 따른 수입 데이터 필터링
+        List<Income> incomes = incomeService.getIncomesByUserIdAndCategory(userId, category);
+        for (Income income : incomes) {
+            transactionDTOs.add(convertToDTO(income, "수입"));
+        }
+
+        if (transactionDTOs.isEmpty()) {
+            String message = "사용자 ID '" + userId + "', 카테고리 '" + category + "'에 대한 거래 내역이 없습니다.";
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(transactionDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/transactions/{userId}")
     public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long userId) {
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
