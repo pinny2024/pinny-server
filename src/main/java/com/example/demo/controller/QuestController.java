@@ -26,25 +26,25 @@ public class QuestController {
     private final QuestService questService;
 
     @PostMapping
-    public ResponseEntity<Quest> addQuest(@RequestBody AddQuestRequest request) {
+    public ResponseEntity<QuestResponse> addQuest(@RequestBody AddQuestRequest request) {
         Quest savedQuest = questService.save(request);
 
 //        Map<String, Object> response = new HashMap<>();
 //        response.put("message", "id가 "+savedQuest.getQuestId()+"인 퀘스트가 생성되었습니다.");
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(savedQuest);
+                .body(new QuestResponse(savedQuest));
     }
 
     @GetMapping("/{user_id}")
     public ResponseEntity<List<QuestResponse>> findAllQuests(@PathVariable("user_id") Long userId) {
-        List<QuestResponse> quests = questService.findAll()
-                .stream()
+        List<Quest> quests = questService.findAllByUserId(userId);
+        List<QuestResponse> responses = quests.stream()
                 .map(QuestResponse::new)
                 .toList();
 
         return ResponseEntity.ok()
-                .body(quests);
+                .body(responses);
     }
 
     @GetMapping("/{user_id}/{id}")
@@ -57,25 +57,19 @@ public class QuestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Quest> updateQuest(@PathVariable("id") Long id,
-                                           @RequestBody UpdateQuestRequest request) {
+    public ResponseEntity<QuestResponse> updateQuest(@PathVariable("id") Long id,
+                                             @RequestBody UpdateQuestRequest request) {
         Quest updateQuest = questService.update(id, request);
 
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("message", "id가 "+id+"인 계획이 수정되었습니다.");
-
         return ResponseEntity.ok()
-                .body(updateQuest);
+                .body(new QuestResponse(updateQuest));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteQuest(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteQuest(@PathVariable("id") Long id) {
         questService.delete(id);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "id가 "+id+"인 계획이 삭제되었습니다.");
-
         return ResponseEntity.ok()
-                .body(response);
+                .body("id가 "+id+"인 계획이 삭제되었습니다.");
     }
 }

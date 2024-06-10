@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class UpdatePlanRequest {
-    private Long planId;
-    private Long userId;
     private String plan;
     private String image;
     private Boolean isChecked;

@@ -18,12 +18,12 @@ import java.util.List;
 public class Plan extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long planId;
+    @Column(name = "planId", updatable = false, nullable = false)
+    private Long id;
 
-    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "plan")
     private String plan;
@@ -37,8 +37,7 @@ public class Plan extends BaseTimeEntity {
     @Column(name = "date")
     private LocalDateTime date;
 
-    public void update(Long userId, String plan, String image, Boolean isChecked, LocalDateTime date) {
-        this.userId = userId;
+    public void update(String plan, String image, Boolean isChecked, LocalDateTime date) {
         this.plan = plan;
         this.image = image;
         this.isChecked = isChecked;

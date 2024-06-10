@@ -14,17 +14,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class AddQuestRequest {
-    private Long questId;
     private Long userId;
     private String quest;
     private String image;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    public Quest toEntity() {
+    public Quest toEntity(User user) {
         return Quest.builder()
-                .questId(questId)
-                .userId(userId)
+                .user(user)
                 .quest(quest)
                 .image(image)
                 .startTime(startTime)
