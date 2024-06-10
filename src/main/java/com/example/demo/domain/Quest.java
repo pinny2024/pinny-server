@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "quests")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Quest extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

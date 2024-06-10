@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Quest;
 import com.example.demo.domain.User;
 import com.example.demo.dto.quest.AddQuestRequest;
+import com.example.demo.dto.quest.LastThreeQuestsResponse;
 import com.example.demo.dto.quest.UpdateQuestRequest;
 import com.example.demo.repository.QuestRepository;
 import com.example.demo.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -56,5 +58,13 @@ public class QuestService {
 
     public void delete(Long id) {
         questRepository.deleteById(id);
+    }
+
+    public List<LastThreeQuestsResponse> getPreviousQuests(Long userId) {
+        List<Quest> quests = questRepository.findTopByUserIdOrderByStartTimeDesc(userId);
+        // 가장 최근의 1개는 제외하고 최대 3개 가져오기
+        List<Quest> subList = quests.size() > 1 ? quests.subList(1, Math.min(4, quests.size())) : List.of();
+        return subList.stream().map(quest -> new LastThreeQuestsResponse(quest))
+                .collect(Collectors.toList());
     }
 }
