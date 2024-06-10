@@ -30,6 +30,9 @@ public class Quest extends BaseTimeEntity{
     @Column(name = "quest")
     private String quest;
 
+    @Column(name = "price")
+    private Integer price;
+
     @Column(name = "image")
     private String image;
 
@@ -41,8 +44,9 @@ public class Quest extends BaseTimeEntity{
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-    public void update(String quest, String image, LocalDateTime startTime, LocalDateTime endTime) {
+    public void update(String quest, Integer price, String image, LocalDateTime startTime, LocalDateTime endTime) {
         this.quest = quest;
+        this.price = price;
         this.image = image;
         this.startTime = startTime;
         this.endTime = endTime;

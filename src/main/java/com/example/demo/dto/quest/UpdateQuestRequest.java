@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 public class UpdateQuestRequest {
     private String quest;
+    private Integer price;
     private String image;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
