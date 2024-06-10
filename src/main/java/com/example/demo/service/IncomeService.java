@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class IncomeService {
@@ -28,9 +27,11 @@ public class IncomeService {
     }
 
     public List<Income> getIncomesByCategory(String category) {
-        return incomeRepository.findAll().stream()
-                .filter(income -> income.getCategory().equals(category))
-                .collect(Collectors.toList());
+        return incomeRepository.findByCategory(category);
+    }
+
+    public List<Income> getIncomesByUserId(Long userId) {
+        return incomeRepository.findByUserId(userId);
     }
 
     public void deleteIncome(Long incomeId) {

@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ExpenditureRepository extends JpaRepository<Expenditure, Long> {
     List<Expenditure> findByCategory(String category);
+    List<Expenditure> findByUserId(Long userId);
 }
