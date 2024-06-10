@@ -69,7 +69,7 @@ public class QuestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<QuestResponse> updateQuest(@PathVariable("id") Long id,
-                                             @RequestBody UpdateQuestRequest request) {
+                                                     @RequestBody UpdateQuestRequest request) {
         Quest updateQuest = questService.update(id, request);
 
         return ResponseEntity.ok()
