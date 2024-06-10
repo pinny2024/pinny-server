@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class PlanResponse {
-    private Long planId;
+    private Long id;
     private Long userId;
     private String plan;
     private String image;
@@ -21,8 +21,8 @@ public class PlanResponse {
     private LocalDateTime updatedAt;
 
     public PlanResponse(Plan plan) {
-        this.planId = plan.getPlanId();
-        this.userId = plan.getUserId();
+        this.id = plan.getId();
+        this.userId = plan.getUser().getId();
         this.plan = plan.getPlan();
         this.image = plan.getImage();
         this.isChecked = plan.getIsChecked();

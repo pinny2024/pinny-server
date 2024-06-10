@@ -33,7 +33,7 @@ public class UserController {
         if (savedUser != null) {
             // 회원가입 성공 메시지와 함께 사용자 ID 반환
             Map<String, Object> response = new HashMap<>();
-            response.put("userId", savedUser.getUserId());
+            response.put("userId", savedUser.getId());
             response.put("message", "회원가입이 완료되었습니다. 월 5천원씩 내시면 모든 기능을 자유롭게 이용하실 수 있습니다!");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
@@ -52,7 +52,7 @@ public class UserController {
         if (user != null) {
             // 로그인 성공 메시지와 함께 사용자 ID 반환
             Map<String, Object> response = new HashMap<>();
-            response.put("userId", user.getUserId());
+            response.put("userId", user.getId());
             response.put("message", "로그인이 완료되었습니다. 월 만 원씩 내시면 모든 기능을 자유롭게 이용하실 수 있습니다!");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {

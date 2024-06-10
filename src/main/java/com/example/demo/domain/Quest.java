@@ -18,12 +18,12 @@ import java.time.LocalDateTime;
 public class Quest extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long questId;
+    @Column(name = "questId", updatable = false, nullable = false)
+    private Long id;
 
-    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "quest")
     private String quest;
@@ -39,8 +39,7 @@ public class Quest extends BaseTimeEntity{
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-    public void update(Long userId, String quest, String image, LocalDateTime startTime, LocalDateTime endTime) {
-        this.userId = userId;
+    public void update(String quest, String image, LocalDateTime startTime, LocalDateTime endTime) {
         this.quest = quest;
         this.image = image;
         this.startTime = startTime;

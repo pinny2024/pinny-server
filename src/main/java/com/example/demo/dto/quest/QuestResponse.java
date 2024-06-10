@@ -18,8 +18,8 @@ public class QuestResponse {
     private LocalDateTime updatedAt;
 
     public QuestResponse(Quest quest) {
-        this.questId = quest.getQuestId();
-        this.userId = quest.getUserId();
+        this.questId = quest.getId();
+        this.userId = quest.getUser().getId();
         this.quest = quest.getQuest();
         this.image = quest.getImage();
         this.startTime = quest.getStartTime();
