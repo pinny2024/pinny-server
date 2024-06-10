@@ -28,4 +28,8 @@ public class ExpenditureService {
     public List<Expenditure> getExpendituresByCategory(String category) {
         return expenditureRepository.findByCategory(category);
     }
+
+    public List<Expenditure> getExpendituresByUserId(Long userId) {
+        return expenditureRepository.findByUserId(userId);
+    }
 }

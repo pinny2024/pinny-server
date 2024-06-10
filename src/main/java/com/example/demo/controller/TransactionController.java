@@ -23,31 +23,29 @@ public class TransactionController {
     @Autowired
     private IncomeService incomeService;
 
-    @GetMapping("/category/{category}")
-    public ResponseEntity<?> getTransactionsByCategory(@PathVariable String category) {
+    @GetMapping("{userId}")
+    public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long userId) {
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
-        // 카테고리에 따른 지출 데이터 필터링
-        List<Expenditure> expenditures = expenditureService.getExpendituresByCategory(category);
+        // 해당 사용자의 지출 데이터 필터링
+        List<Expenditure> expenditures = expenditureService.getExpendituresByUserId(userId);
         for (Expenditure expenditure : expenditures) {
             transactionDTOs.add(convertToDTO(expenditure, "지출"));
         }
 
-        // 카테고리에 따른 수입 데이터 필터링
-        List<Income> incomes = incomeService.getIncomesByCategory(category);
+        // 해당 사용자의 수입 데이터 필터링
+        List<Income> incomes = incomeService.getIncomesByUserId(userId);
         for (Income income : incomes) {
             transactionDTOs.add(convertToDTO(income, "수입"));
         }
 
         if (transactionDTOs.isEmpty()) {
-            String message = "카테고리 '" + category + "'에 대한 거래 내역이 없습니다.";
+            String message = "사용자 ID '" + userId + "'에 대한 거래 내역이 없습니다.";
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(transactionDTOs, HttpStatus.OK);
     }
-
-
 
     private TransactionDTO convertToDTO(Expenditure expenditure, String type) {
         TransactionDTO transactionDTO = new TransactionDTO();
