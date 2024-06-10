@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class LastThreeQuestsResponse {
     private Long questId;
     private String quest;
+    private Integer price;
     private String image;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -18,6 +19,7 @@ public class LastThreeQuestsResponse {
     public LastThreeQuestsResponse(Quest quest) {
         this.questId = quest.getId();
         this.quest = quest.getQuest();
+        this.price = quest.getPrice();
         this.image = quest.getImage();
         this.startTime = quest.getStartTime();
         this.endTime = quest.getEndTime();

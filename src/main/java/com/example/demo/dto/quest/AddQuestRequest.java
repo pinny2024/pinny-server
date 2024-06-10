@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class AddQuestRequest {
     private Long userId;
     private String quest;
+    private Integer price;
     private String image;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -24,6 +25,7 @@ public class AddQuestRequest {
         return Quest.builder()
                 .user(user)
                 .quest(quest)
+                .price(price)
                 .image(image)
                 .startTime(startTime)
                 .endTime(endTime)
