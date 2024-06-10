@@ -11,6 +11,7 @@ public class QuestResponse {
     private Long questId;
     private Long userId;
     private String quest;
+    private Integer price;
     private String image;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -20,6 +21,7 @@ public class QuestResponse {
     public QuestResponse(Quest quest) {
         this.questId = quest.getId();
         this.userId = quest.getUser().getId();
+        this.price = quest.getPrice();
         this.quest = quest.getQuest();
         this.image = quest.getImage();
         this.startTime = quest.getStartTime();
