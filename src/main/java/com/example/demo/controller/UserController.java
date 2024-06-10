@@ -3,47 +3,69 @@ package com.example.demo.controller;
 import com.example.demo.domain.User;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class UserController {
-
+    @Value("${file.upload-dir}")
+    private String uploadDir;
     @Autowired
     private UserService userService;
 
     @PostMapping("/join")
-    public ResponseEntity<Map<String, Object>> joinUser(@RequestBody UserDTO userDTO) {
-        // 이미 가입된 이메일인지 확인
-        if (userService.existsByEmail(userDTO.getEmail())) {
-            // 이미 가입된 이메일이라면 에러 메시지 반환
+    public ResponseEntity<Map<String, Object>> joinUser(@RequestParam("file") MultipartFile file, @RequestParam("userDTO") String userDTOString) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            UserDTO userDTO = objectMapper.readValue(userDTOString, UserDTO.class);
+
+            if (userService.existsByEmail(userDTO.getEmail())) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("message", "이미 가입된 이메일 주소입니다.");
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+            }
+
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+            String filePath = uploadDir + "/" + fileName;
+            try {
+                Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace(); // 에러 처리 필요
+            }
+
+            userDTO.setProfile(filePath);
+            User savedUser = userService.saveUser(userDTO);
+            if (savedUser != null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("userId", savedUser.getId());
+                response.put("message", "회원가입이 완료되었습니다. 월 5천원씩 내시면 모든 기능을 자유롭게 이용하실 수 있습니다!");
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+            } else {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("message", "회원가입에 실패했습니다.");
+                return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "이미 가입된 이메일 주소입니다.");
+            errorResponse.put("message", "잘못된 요청입니다.");
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
-
-        // 새로운 사용자 정보 저장
-        User savedUser = userService.saveUser(userDTO);
-        if (savedUser != null) {
-            // 회원가입 성공 메시지와 함께 사용자 ID 반환
-            Map<String, Object> response = new HashMap<>();
-            response.put("userId", savedUser.getId());
-            response.put("message", "회원가입이 완료되었습니다. 월 5천원씩 내시면 모든 기능을 자유롭게 이용하실 수 있습니다!");
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } else {
-            // 회원가입 실패 시 에러 메시지 반환
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "회원가입에 실패했습니다.");
-             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
-
 
 
     @PostMapping("/login")
@@ -67,10 +89,10 @@ public class UserController {
 
     @RequestMapping("/users")
 
-        @GetMapping
-        public List<User> getAllUsers() {
-            return userService.getAllUsers();
-        }
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
