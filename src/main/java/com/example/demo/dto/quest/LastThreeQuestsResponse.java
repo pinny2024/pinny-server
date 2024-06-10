@@ -1,15 +1,13 @@
 package com.example.demo.dto.quest;
 
 import com.example.demo.domain.Quest;
-import com.example.demo.domain.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-public class QuestResponse {
+public class LastThreeQuestsResponse {
     private Long questId;
-    private Long userId;
     private String quest;
     private String image;
     private LocalDateTime startTime;
@@ -17,9 +15,8 @@ public class QuestResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public QuestResponse(Quest quest) {
+    public LastThreeQuestsResponse(Quest quest) {
         this.questId = quest.getId();
-        this.userId = quest.getUser().getId();
         this.quest = quest.getQuest();
         this.image = quest.getImage();
         this.startTime = quest.getStartTime();

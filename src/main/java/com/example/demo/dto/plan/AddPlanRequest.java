@@ -14,17 +14,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class AddPlanRequest {
-    private Long planId;
     private Long userId;
     private String plan;
     private String image;
     private Boolean isChecked;
     private LocalDateTime date;
 
-    public Plan toEntity() {
+    public Plan toEntity(User user) {
         return Plan.builder()
-                .planId(planId)
-                .userId(userId)
+                .user(user)
                 .plan(plan)
                 .image(image)
                 .isChecked(isChecked)

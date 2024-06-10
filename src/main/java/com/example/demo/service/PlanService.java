@@ -1,13 +1,16 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Plan;
+import com.example.demo.domain.User;
 import com.example.demo.dto.plan.AddPlanRequest;
 import com.example.demo.dto.plan.UpdatePlanRequest;
 import com.example.demo.repository.PlanRepository;
+import com.example.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +19,16 @@ import java.util.List;
 @Service
 public class PlanService {
 
+    @Autowired
     private final PlanRepository planRepository;
+    @Autowired
+    private final UserRepository userRepository;
 
     public Plan save(AddPlanRequest request) {
-        return planRepository.save(request.toEntity());
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
+        Plan plan = request.toEntity(user);
+        return planRepository.save(plan);
     }
 
     public List<Plan> findAll() {
@@ -32,17 +41,21 @@ public class PlanService {
                 .orElseThrow(()->new IllegalArgumentException("not found: "+id));
     }
 
+    public List<Plan> findAllPlansByUserId(Long userId) {
+        return planRepository.findByUserId(userId);
+    }
+
     @Transactional
     public Plan update(Long id, UpdatePlanRequest request){
         Plan plan = planRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("not found "+id));
 
         plan.update(
-                request.getUserId(),
                 request.getPlan(),
                 request.getImage(),
                 request.getIsChecked(),
-                request.getDate());
+                request.getDate()
+        );
 
         return plan;
     }
