@@ -24,6 +24,7 @@ import java.util.Map;
 public class UserController {
     @Value("${file.upload-dir}")
     private String uploadDir;
+
     @Autowired
     private UserService userService;
 
@@ -67,7 +68,6 @@ public class UserController {
         }
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
         User user = userService.login(userDTO.getEmail(), userDTO.getPassword());
@@ -85,10 +85,7 @@ public class UserController {
         }
     }
 
-
-
     @RequestMapping("/users")
-
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
@@ -116,5 +113,4 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
 }
