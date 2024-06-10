@@ -18,5 +18,4 @@ public class UserDTO {
     private Integer ageRange;
     private String introduction;
     private List<String> badge;
-
 }

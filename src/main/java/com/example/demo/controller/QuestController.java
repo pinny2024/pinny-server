@@ -6,11 +6,13 @@ import com.example.demo.dto.plan.AddPlanRequest;
 import com.example.demo.dto.plan.PlanResponse;
 import com.example.demo.dto.plan.UpdatePlanRequest;
 import com.example.demo.dto.quest.AddQuestRequest;
+import com.example.demo.dto.quest.LastThreeQuestsResponse;
 import com.example.demo.dto.quest.QuestResponse;
 import com.example.demo.dto.quest.UpdateQuestRequest;
 import com.example.demo.service.PlanService;
 import com.example.demo.service.QuestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +31,28 @@ public class QuestController {
     public ResponseEntity<QuestResponse> addQuest(@RequestBody AddQuestRequest request) {
         Quest savedQuest = questService.save(request);
 
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("message", "id가 "+savedQuest.getQuestId()+"인 퀘스트가 생성되었습니다.");
+        if (savedQuest.getQuest() == null || savedQuest.getQuest().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);  // BAD REQUEST 상태 코드 반환
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new QuestResponse(savedQuest));
+    }
+
+    // 이전의 3개 퀘스트 가져오기
+    @GetMapping("/{user_id}/previous")
+    public List<LastThreeQuestsResponse> getPreviousQuests(@PathVariable("user_id") Long userId) {
+        return questService.getPreviousQuests(userId);
+    }
+
+    @GetMapping("/{user_id}/{id}")
+    public ResponseEntity<QuestResponse> findQuest(@PathVariable("user_id") Long userId,
+                                                   @PathVariable("id") Long id) {
+        Quest quest = questService.findById(id);
+
+        return ResponseEntity.ok()
+                .body(new QuestResponse(quest));
     }
 
     @GetMapping("/{user_id}")
@@ -47,14 +66,6 @@ public class QuestController {
                 .body(responses);
     }
 
-    @GetMapping("/{user_id}/{id}")
-    public ResponseEntity<QuestResponse> findQuest(@PathVariable("user_id") Long userId,
-                                                   @PathVariable("id") Long id) {
-        Quest quest = questService.findById(id);
-
-        return ResponseEntity.ok()
-                .body(new QuestResponse(quest));
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<QuestResponse> updateQuest(@PathVariable("id") Long id,
