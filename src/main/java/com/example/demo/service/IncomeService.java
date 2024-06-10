@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,5 +31,22 @@ public class IncomeService {
         return incomeRepository.findAll().stream()
                 .filter(income -> income.getCategory().equals(category))
                 .collect(Collectors.toList());
+    }
+
+    public void deleteIncome(Long incomeId) {
+        incomeRepository.deleteById(incomeId);
+    }
+
+    public Income updateIncome(Long incomeId, Income updatedIncome) {
+        Optional<Income> existingIncomeOpt = incomeRepository.findById(incomeId);
+        if (existingIncomeOpt.isPresent()) {
+            Income existingIncome = existingIncomeOpt.get();
+            existingIncome.setMoney(updatedIncome.getMoney());
+            existingIncome.setCategory(updatedIncome.getCategory());
+            existingIncome.setContent(updatedIncome.getContent());
+            return incomeRepository.save(existingIncome);
+        } else {
+            return null;
+        }
     }
 }
