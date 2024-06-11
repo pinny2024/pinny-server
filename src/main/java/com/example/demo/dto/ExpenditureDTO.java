@@ -4,10 +4,21 @@ import java.time.LocalDateTime;
 
 public class ExpenditureDTO {
     private int money;
-    private String category;
+    private int categoryId;
     private String content;
     private LocalDateTime createdAt;
     private Long userId;
+    private String category;
+
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
 
     public int getMoney() {
         return money;
@@ -17,12 +28,12 @@ public class ExpenditureDTO {
         this.money = money;
     }
 
-    public String getCategory() {
-        return category;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getContent() {
