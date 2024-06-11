@@ -55,18 +55,33 @@ public class TransactionController {
 
 
     @GetMapping("/type")
-    public List<TransactionDTO> getAllTransactions() {
-        return transactionService.getAllTransactions().stream()
+    public ResponseEntity<?> getAllTransactionsByUserId(@PathVariable Long userId) {
+        // 사용자 ID가 유효한지 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        // 사용자 ID가 유효하면 해당 사용자의 거래를 반환
+        List<Transaction> transactions = transactionService.getTransactionsByUserId(userId);
+
+        // 거래가 없는 경우에 대한 처리
+        if (transactions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자의 거래 정보가 없습니다.");
+        }
+
+        // 거래 정보를 DTO로 변환하여 반환
+        List<TransactionDTO> dtos = transactions.stream()
                 .map(transaction -> {
                     TransactionDTO dto = new TransactionDTO();
                     dto.setAmount(transaction.getAmount());
                     dto.setCategory(transaction.getCategory().name());
                     dto.setDescription(transaction.getDescription());
                     dto.setType(transaction.getType().name());
-                    dto.setCreatedAt(transaction.getCreatedAt()); // createdAt 설정
+                    dto.setCreatedAt(transaction.getCreatedAt());
                     return dto;
                 })
                 .collect(Collectors.toList());
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @GetMapping("/category/{category}")
