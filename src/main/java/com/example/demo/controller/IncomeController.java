@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.Income;
+import com.example.demo.domain.User;
 import com.example.demo.dto.IncomeDTO;
 import com.example.demo.service.IncomeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,20 +45,47 @@ public class IncomeController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<String> createIncome(@PathVariable("userId") Long userId, @RequestBody Income income) {
-        if (income == null || income.getMoney() == 0 || income.getCategory() == null || income.getContent() == null) {
-            return new ResponseEntity<>("수입 정보를 입력해야 합니다.", HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> createIncome(@PathVariable("userId") Long userId, @RequestBody IncomeDTO incomeDTO) {
+        try {
+            // 유효하지 않은 사용자일 경우 예외처리
+            if (!isValidUser(userId)) {
+                return new ResponseEntity<>("유효하지 않은 사용자입니다.", HttpStatus.BAD_REQUEST);
+            }
 
-        // 받은 userId로 Income 객체에 userId 설정
-        income.setUserId(userId);
+            // 수입 정보가 유효한지 검사
+            if (incomeDTO == null || incomeDTO.getMoney() == 0 || incomeDTO.getCategoryId() == 0 || incomeDTO.getContent() == null) {
+                return new ResponseEntity<>("수입 정보를 입력해야 합니다.", HttpStatus.BAD_REQUEST);
+            }
 
-        Income savedIncome = incomeService.saveIncome(income);
-        if (savedIncome != null) {
-            return new ResponseEntity<>("성공적으로 값이 들어갔습니다.", HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>("성공적으로 값이 들어가지 못하였습니다. 결론은 실패!", HttpStatus.INTERNAL_SERVER_ERROR);
+            // 받은 userId로 IncomeDTO 객체에 userId 설정
+            incomeDTO.setUserId(userId);
+
+            Income income = convertToEntity(incomeDTO); // DTO를 엔티티로 변환
+            Income savedIncome = incomeService.saveIncome(income);
+            if (savedIncome != null) {
+                return new ResponseEntity<>("성공적으로 값이 들어갔습니다.", HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("성공적으로 값이 들어가지 못하였습니다. 결론은 실패!", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("요청을 처리하는 중에 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // 사용자가 유효한지 검사하는 메서드
+    private boolean isValidUser(Long userId) {
+        // 여기에 사용자 유효성을 검사하는 코드를 작성합니다. 예를 들어, 사용자가 데이터베이스에 존재하는지 확인할 수 있습니다.
+        // 예제로 간단하게 사용자 ID가 양수인지 확인합니다.
+        return userId != null && userId > 0;
+    }
+
+
+    private Income convertToEntity(IncomeDTO incomeDTO) {
+        return Income.builder()
+                .money(incomeDTO.getMoney())
+                .category(String.valueOf(incomeDTO.getCategoryId())) // categoryId를 문자열로 변환
+                .content(incomeDTO.getContent())
+                .build();
     }
 
 

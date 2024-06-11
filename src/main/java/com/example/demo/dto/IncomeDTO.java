@@ -4,25 +4,31 @@ import java.time.LocalDateTime;
 
 public class IncomeDTO {
     private int money;
-    private String category;
+    private int categoryId; // categoryId 필드 추가
     private String content;
     private LocalDateTime createdAt;
-    private String image;
-
+    private Long userId; // userId 필드 추가
+    private String category;
     public int getMoney() {
         return money;
     }
-
-    public void setMoney(int money) {
-        this.money = money;
-    }
-
     public String getCategory() {
         return category;
     }
 
     public void setCategory(String category) {
         this.category = category;
+    }
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getContent() {
@@ -41,5 +47,12 @@ public class IncomeDTO {
         this.createdAt = createdAt;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
 }
