@@ -14,6 +14,9 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
+    public List<Transaction> getTransactionsByUserIdAndCategory(Long userId, Category category) {
+        return transactionRepository.findByUser_IdAndCategory(userId, category);
+    }
     @Autowired
     public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
