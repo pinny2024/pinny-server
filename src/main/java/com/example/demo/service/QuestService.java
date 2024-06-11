@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Quest;
+import com.example.demo.domain.QuestCategory;
 import com.example.demo.domain.User;
 import com.example.demo.dto.quest.AddQuestRequest;
 import com.example.demo.dto.quest.LastThreeQuestsResponse;
 import com.example.demo.dto.quest.UpdateQuestRequest;
+import com.example.demo.repository.QuestCategoryRepository;
 import com.example.demo.repository.QuestRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -18,15 +20,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class QuestService {
-    @Autowired
+
     private final QuestRepository questRepository;
-    @Autowired
     private final UserRepository userRepository;
+    private final QuestCategoryRepository categoryRepository;
 
     public Quest save(AddQuestRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
-        Quest quest = request.toEntity(user);
+        QuestCategory category = categoryRepository.findById(request.getQuestCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Quest Category not found: " + request.getQuestCategoryId()));
+        Quest quest = request.toEntity(user, category);
         return questRepository.save(quest);
     }
 
@@ -46,9 +50,13 @@ public class QuestService {
     @Transactional
     public Quest update(Long id, UpdateQuestRequest request){
         Quest quest = questRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("not found "+id));
+                .orElseThrow(()-> new IllegalArgumentException("Quest not found "+id));
+
+        QuestCategory category = categoryRepository.findById(request.getQuestCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Quest Category not found: " + request.getQuestCategoryId()));
 
         quest.update(
+                category,
                 request.getQuest(),
                 request.getPrice(),
                 request.getEndTime());

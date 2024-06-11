@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Getter
 public class LastThreeQuestsResponse {
     private Long questId;
+    private Long userId;
+    private Long questCategoryId;
     private String quest;
     private Integer price;
     private LocalDateTime startTime;
@@ -17,6 +19,8 @@ public class LastThreeQuestsResponse {
 
     public LastThreeQuestsResponse(Quest quest) {
         this.questId = quest.getId();
+        this.userId = quest.getUser().getId();
+        this.questCategoryId = quest.getCategory().getId();
         this.quest = quest.getQuest();
         this.price = quest.getPrice();
         this.startTime = quest.getStartTime();

@@ -1,11 +1,8 @@
 package com.example.demo.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +30,10 @@ public class Quest extends BaseTimeEntity{
     @Column(name = "price", nullable = false)
     private Integer price;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "questCategoryId", nullable = false)
+    private QuestCategory category;
+
     @CreatedDate
     @Column(name = "startTime", nullable = false, updatable = false)
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -42,7 +43,8 @@ public class Quest extends BaseTimeEntity{
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-    public void update(String quest, Integer price, LocalDateTime endTime) {
+    public void update(QuestCategory category, String quest, Integer price, LocalDateTime endTime) {
+        this.category = category;
         this.quest = quest;
         this.price = price;
         this.endTime = endTime;
