@@ -7,4 +7,5 @@ public enum Category {
     금융,         // 금융
     기타,            // 기타
     저축
+
 }
