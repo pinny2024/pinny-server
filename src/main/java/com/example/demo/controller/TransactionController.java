@@ -48,7 +48,7 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions/{userId}")
-    public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<?> getTransactionsByUserId(@PathVariable("userId") Long userId) {
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
         // 해당 사용자의 지출 데이터 필터링
