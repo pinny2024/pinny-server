@@ -53,8 +53,7 @@ public class PlanService {
         plan.update(
                 request.getPlan(),
                 request.getImage(),
-                request.getIsChecked(),
-                request.getDate()
+                request.getIsChecked()
         );
 
         return plan;

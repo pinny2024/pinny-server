@@ -16,7 +16,6 @@ public class PlanResponse {
     private String plan;
     private String image;
     private Boolean isChecked;
-    private LocalDateTime date;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -26,7 +25,6 @@ public class PlanResponse {
         this.plan = plan.getPlan();
         this.image = plan.getImage();
         this.isChecked = plan.getIsChecked();
-        this.date = plan.getDate();
         this.createdAt = plan.getCreatedAt();
         this.updatedAt = plan.getUpdatedAt();
     }

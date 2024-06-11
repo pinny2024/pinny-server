@@ -51,8 +51,6 @@ public class QuestService {
         quest.update(
                 request.getQuest(),
                 request.getPrice(),
-                request.getImage(),
-                request.getStartTime(),
                 request.getEndTime());
         return quest;
     }

@@ -22,10 +22,10 @@ public class Plan extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @Column(name = "plan")
+    @Column(name = "plan", nullable = false)
     private String plan;
 
     @Column(name = "image")
@@ -34,14 +34,10 @@ public class Plan extends BaseTimeEntity {
     @Column(name = "isChecked")
     private Boolean isChecked;
 
-    @Column(name = "date")
-    private LocalDateTime date;
-
-    public void update(String plan, String image, Boolean isChecked, LocalDateTime date) {
+    public void update(String plan, String image, Boolean isChecked) {
         this.plan = plan;
         this.image = image;
         this.isChecked = isChecked;
-        this.date = date;
     }
 
 }
