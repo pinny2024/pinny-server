@@ -32,7 +32,7 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<TransactionDTO> createTransaction(@PathVariable Long userId, @RequestBody Transaction transaction) {
+    public ResponseEntity<TransactionDTO> createTransaction(@PathVariable("userId") Long userId, @RequestBody Transaction transaction) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
@@ -55,7 +55,7 @@ public class TransactionController {
 
 
     @GetMapping("/type")
-    public ResponseEntity<?> getAllTransactionsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<?> getAllTransactionsByUserId(@PathVariable("userId") Long userId) {
         // 사용자 ID가 유효한지 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
@@ -85,7 +85,8 @@ public class TransactionController {
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<?> getTransactionsByCategoryAndUserId(@PathVariable Long userId, @PathVariable String category) {
+    public ResponseEntity<?> getTransactionsByCategoryAndUserId(@PathVariable("userId") Long userId,
+                                                                @PathVariable("category") String category) {
         // 사용자 ID가 유효한지 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
