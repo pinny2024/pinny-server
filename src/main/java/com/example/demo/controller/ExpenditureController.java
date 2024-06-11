@@ -33,23 +33,29 @@ public class ExpenditureController {
 
     @PostMapping("/{userId}")
     public ResponseEntity<String> createExpenditure(@PathVariable("userId") Long userId, @RequestBody ExpenditureDTO expenditureDTO) {
-        if (expenditureDTO == null || expenditureDTO.getMoney() == 0 || expenditureDTO.getCategory() == null || expenditureDTO.getContent() == null) {
-            return new ResponseEntity<>("지출 정보를 입력해야 합니다.", HttpStatus.BAD_REQUEST);
-        }
+        try {
+            if (expenditureDTO == null || expenditureDTO.getMoney() == 0 || expenditureDTO.getCategoryId() == 0 || expenditureDTO.getContent() == null) {
+                return new ResponseEntity<>("지출 정보를 입력해야 합니다.", HttpStatus.BAD_REQUEST);
+            }
 
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            return new ResponseEntity<>("유효하지 않은 사용자 ID입니다.", HttpStatus.BAD_REQUEST);
-        }
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                return new ResponseEntity<>("유효하지 않은 사용자 ID입니다.", HttpStatus.BAD_REQUEST);
+            }
 
-        Expenditure expenditure = convertToEntity(expenditureDTO, user);
-        Expenditure savedExpenditure = expenditureService.saveExpenditure(expenditure);
-        if (savedExpenditure != null) {
-            return new ResponseEntity<>("성공적으로 값이 들어갔습니다.", HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>("성공적으로 값이 들어가지 못하였습니다. 결론은 실패!", HttpStatus.INTERNAL_SERVER_ERROR);
+            Expenditure expenditure = convertToEntity(expenditureDTO, user);
+            Expenditure savedExpenditure = expenditureService.saveExpenditure(expenditure);
+            if (savedExpenditure != null) {
+                return new ResponseEntity<>("성공적으로 값이 들어갔습니다.", HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("성공적으로 값이 들어가지 못하였습니다. 결론은 실패!", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("서버에서 예기치 못한 오류가 발생했습니다: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
     private ExpenditureDTO convertToDTO(Expenditure expenditure) {
         ExpenditureDTO expenditureDTO = new ExpenditureDTO();
@@ -63,9 +69,10 @@ public class ExpenditureController {
     private Expenditure convertToEntity(ExpenditureDTO expenditureDTO, User user) {
         return Expenditure.builder()
                 .money(expenditureDTO.getMoney())
-                .category(expenditureDTO.getCategory())
+                .category(String.valueOf(expenditureDTO.getCategoryId())) // categoryId를 문자열로 변환
                 .content(expenditureDTO.getContent())
                 .user(user)
                 .build();
     }
+
 }
