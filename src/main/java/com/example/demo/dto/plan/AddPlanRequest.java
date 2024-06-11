@@ -17,7 +17,7 @@ public class AddPlanRequest {
     private Long userId;
     private String plan;
     private String image;
-    private Boolean isChecked;
+    private boolean isChecked;
 
     public Plan toEntity(User user) {
         return Plan.builder()
