@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.Category;
 import com.example.demo.domain.Transaction;
+import com.example.demo.dto.CategoryNotFoundException;
 import com.example.demo.dto.TransactionDTO;
 import com.example.demo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,34 +42,39 @@ public class TransactionController {
                     dto.setCategory(transaction.getCategory().name());
                     dto.setDescription(transaction.getDescription());
                     dto.setType(transaction.getType().name());
+                    dto.setCreatedAt(transaction.getCreatedAt()); // createdAt 설정
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/category/{category}")
-    public List<TransactionDTO> getTransactionsByCategory(@PathVariable String category) {
+    public ResponseEntity<?> getTransactionsByCategory(@PathVariable String category) {
         if (!Category.getAllCategories().contains(category)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 카테고리 값입니다.");
         }
 
         Category cat = Category.valueOf(category);
-        return transactionService.getTransactionsByCategory(cat).stream()
+        List<Transaction> transactions = transactionService.getTransactionsByCategory(cat);
+
+        if (transactions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 카테고리에 대한 값이 없습니다.");
+        }
+
+        List<TransactionDTO> dtos = transactions.stream()
                 .map(transaction -> {
                     TransactionDTO dto = new TransactionDTO();
                     dto.setAmount(transaction.getAmount());
                     dto.setCategory(transaction.getCategory().name());
                     dto.setDescription(transaction.getDescription());
                     dto.setType(transaction.getType().name());
+                    dto.setCreatedAt(transaction.getCreatedAt()); // createdAt 설정
                     return dto;
                 })
                 .collect(Collectors.toList());
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
-        return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
-    }
 
 }
