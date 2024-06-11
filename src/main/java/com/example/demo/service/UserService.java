@@ -26,9 +26,16 @@ public class UserService {
         User user = new User();
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
+        user.setNickname(userDTO.getNickname());
+        user.setCareer(userDTO.getCareer());
         user.setProfile(userDTO.getProfile());
+        user.setSalary(userDTO.getSalary());
+        user.setSaving(userDTO.getSaving());
+        user.setAgeRange(userDTO.getAgeRange());
+        user.setIntroduction(userDTO.getIntroduction());
         return userRepository.save(user);
     }
+
 
     public User login(String email, String password) {
         return userRepository.findByEmailAndPassword(email, password).orElse(null);
