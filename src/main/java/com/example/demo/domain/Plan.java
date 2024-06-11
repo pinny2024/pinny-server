@@ -1,12 +1,9 @@
 package com.example.demo.domain;
 
+import com.example.demo.domain.BaseTimeEntity;
+import com.example.demo.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,12 +29,16 @@ public class Plan extends BaseTimeEntity {
     private String image;
 
     @Column(name = "isChecked")
-    private Boolean isChecked;
+    @Builder.Default
+    private boolean isChecked = false;
 
     public void update(String plan, String image, Boolean isChecked) {
         this.plan = plan;
         this.image = image;
-        this.isChecked = isChecked;
+        this.isChecked = isChecked != null ? isChecked : false;
     }
 
+    public Boolean getIsChecked() {
+        return false;
+    }
 }
