@@ -13,6 +13,10 @@ import java.util.NoSuchElementException;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    public List<Transaction> getTransactionsByCategory(Category category) {
+        List<Transaction> transactions = transactionRepository.findByCategory(category);
+        return transactions;
+    }
 
     @Autowired
     public TransactionService(TransactionRepository transactionRepository) {
@@ -27,11 +31,5 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public List<Transaction> getTransactionsByCategory(Category category) {
-        List<Transaction> transactions = transactionRepository.findByCategory(category);
-        if (transactions.isEmpty()) {
-            throw new NoSuchElementException("해당 카테고리에 대한 정보가 없습니다.");
-        }
-        return transactions;
-    }
+
 }
