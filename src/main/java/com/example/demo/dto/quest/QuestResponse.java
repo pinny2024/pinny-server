@@ -12,7 +12,6 @@ public class QuestResponse {
     private Long userId;
     private String quest;
     private Integer price;
-    private String image;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private LocalDateTime createdAt;
@@ -23,7 +22,6 @@ public class QuestResponse {
         this.userId = quest.getUser().getId();
         this.price = quest.getPrice();
         this.quest = quest.getQuest();
-        this.image = quest.getImage();
         this.startTime = quest.getStartTime();
         this.endTime = quest.getEndTime();
         this.createdAt = quest.getCreatedAt();

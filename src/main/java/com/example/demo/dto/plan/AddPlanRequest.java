@@ -18,7 +18,6 @@ public class AddPlanRequest {
     private String plan;
     private String image;
     private Boolean isChecked;
-    private LocalDateTime date;
 
     public Plan toEntity(User user) {
         return Plan.builder()
@@ -26,7 +25,6 @@ public class AddPlanRequest {
                 .plan(plan)
                 .image(image)
                 .isChecked(isChecked)
-                .date(date)
                 .build();
     }
 }

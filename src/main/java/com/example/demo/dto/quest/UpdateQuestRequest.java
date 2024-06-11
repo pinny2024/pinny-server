@@ -13,7 +13,5 @@ import java.time.LocalDateTime;
 public class UpdateQuestRequest {
     private String quest;
     private Integer price;
-    private String image;
-    private LocalDateTime startTime;
     private LocalDateTime endTime;
 }

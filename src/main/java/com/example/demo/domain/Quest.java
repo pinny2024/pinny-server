@@ -24,19 +24,17 @@ public class Quest extends BaseTimeEntity{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @Column(name = "quest")
+    @Column(name = "quest", nullable = false)
     private String quest;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Integer price;
 
-    @Column(name = "image")
-    private String image;
-
-    @Column(name = "startTime")
+    @CreatedDate
+    @Column(name = "startTime", nullable = false, updatable = false)
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
@@ -44,11 +42,9 @@ public class Quest extends BaseTimeEntity{
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-    public void update(String quest, Integer price, String image, LocalDateTime startTime, LocalDateTime endTime) {
+    public void update(String quest, Integer price, LocalDateTime endTime) {
         this.quest = quest;
         this.price = price;
-        this.image = image;
-        this.startTime = startTime;
         this.endTime = endTime;
     }
 }

@@ -17,18 +17,14 @@ public class AddQuestRequest {
     private Long userId;
     private String quest;
     private Integer price;
-    private String image;
     private LocalDateTime startTime;
-    private LocalDateTime endTime;
 
     public Quest toEntity(User user) {
         return Quest.builder()
                 .user(user)
                 .quest(quest)
                 .price(price)
-                .image(image)
                 .startTime(startTime)
-                .endTime(endTime)
                 .build();
     }
 }
