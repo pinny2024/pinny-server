@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class QuestResponse {
     private Long questId;
     private Long userId;
+    private Long questCategoryId;
     private String quest;
     private Integer price;
     private LocalDateTime startTime;
@@ -20,8 +21,9 @@ public class QuestResponse {
     public QuestResponse(Quest quest) {
         this.questId = quest.getId();
         this.userId = quest.getUser().getId();
-        this.price = quest.getPrice();
+        this.questCategoryId = quest.getCategory().getId();
         this.quest = quest.getQuest();
+        this.price = quest.getPrice();
         this.startTime = quest.getStartTime();
         this.endTime = quest.getEndTime();
         this.createdAt = quest.getCreatedAt();

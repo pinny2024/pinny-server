@@ -1,6 +1,7 @@
 package com.example.demo.dto.quest;
 
 import com.example.demo.domain.Quest;
+import com.example.demo.domain.QuestCategory;
 import com.example.demo.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
@@ -15,16 +16,16 @@ import java.time.LocalDateTime;
 @Getter
 public class AddQuestRequest {
     private Long userId;
+    private Long questCategoryId;
     private String quest;
     private Integer price;
-    private LocalDateTime startTime;
 
-    public Quest toEntity(User user) {
+    public Quest toEntity(User user, QuestCategory category) {
         return Quest.builder()
                 .user(user)
+                .category(category)
                 .quest(quest)
                 .price(price)
-                .startTime(startTime)
                 .build();
     }
 }

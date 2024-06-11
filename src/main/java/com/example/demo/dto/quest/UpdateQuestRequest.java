@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class UpdateQuestRequest {
+    private Long questCategoryId;
     private String quest;
     private Integer price;
     private LocalDateTime endTime;
