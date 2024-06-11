@@ -1,21 +1,9 @@
 package com.example.demo.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Setter
-@Getter
-@Table(name = "categories")
-@Builder
-public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "categoryId", updatable = false, nullable = false)
-    private Long id;
-
-    @Column(name = "name", nullable = false)
-    private String name;
+public enum Category {
+    식비,            // 식비
+    교통수단,  // 교통수단
+    문화생활,         // 문화생활
+    금융,         // 금융
+    기타            // 기타
 }

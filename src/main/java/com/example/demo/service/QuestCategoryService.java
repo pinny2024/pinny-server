@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Category;
 import com.example.demo.domain.QuestCategory;
-import com.example.demo.dto.category.AddCategoryRequest;
 import com.example.demo.dto.questCategory.AddQuestCategoryRequest;
-import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.QuestCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

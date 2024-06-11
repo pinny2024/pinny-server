@@ -1,6 +1,5 @@
 package com.example.demo.dto.questCategory;
 
-import com.example.demo.domain.Category;
 import com.example.demo.domain.QuestCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

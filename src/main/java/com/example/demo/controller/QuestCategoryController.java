@@ -1,13 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.Category;
 import com.example.demo.domain.QuestCategory;
-import com.example.demo.dto.category.AddCategoryRequest;
-import com.example.demo.dto.category.CategoryResponse;
 import com.example.demo.dto.questCategory.AddQuestCategoryRequest;
 import com.example.demo.dto.questCategory.QuestCategoryResponse;
-import com.example.demo.repository.QuestCategoryRepository;
-import com.example.demo.service.CategoryService;
 import com.example.demo.service.QuestCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
