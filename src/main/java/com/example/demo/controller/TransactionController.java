@@ -24,7 +24,7 @@ public class TransactionController {
     private IncomeService incomeService;
 
     @GetMapping("/category/{userId}/{category}")
-    public ResponseEntity<?> getTransactionsByCategory(@PathVariable Long userId, @PathVariable String category) {
+    public ResponseEntity<?> getTransactionsByCategory(@PathVariable("userId") Long userId, @PathVariable("category") String category) {
         List<TransactionDTO> transactionDTOs = new ArrayList<>();
 
         // 해당 사용자의 카테고리에 따른 지출 데이터 필터링
