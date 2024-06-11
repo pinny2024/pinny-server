@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.Category;
 import com.example.demo.domain.Transaction;
+import com.example.demo.domain.User;
 import com.example.demo.dto.CategoryNotFoundException;
 import com.example.demo.dto.TransactionDTO;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,21 +19,40 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/transactions/{userId}")
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final UserRepository userRepository; // Autowiring UserRepository
 
     @Autowired
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, UserRepository userRepository) {
         this.transactionService = transactionService;
+        this.userRepository = userRepository; // Initializing UserRepository
     }
 
     @PostMapping
-    public Transaction createTransaction(@RequestBody Transaction transaction) {
-        transaction.setCreatedAt(LocalDateTime.now()); // 현재 시간 설정
-        return transactionService.saveTransaction(transaction);
+    public ResponseEntity<TransactionDTO> createTransaction(@PathVariable Long userId, @RequestBody Transaction transaction) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        transaction.setUser(user);
+        transaction.setCreatedAt(LocalDateTime.now());
+
+        Transaction savedTransaction = transactionService.saveTransaction(transaction);
+
+        // 사용자 정보를 제외한 거래 정보만 반환합니다.
+        TransactionDTO dto = new TransactionDTO();
+        dto.setAmount(savedTransaction.getAmount());
+        dto.setCategory(savedTransaction.getCategory().name());
+        dto.setDescription(savedTransaction.getDescription());
+        dto.setType(savedTransaction.getType().name());
+        dto.setCreatedAt(savedTransaction.getCreatedAt());
+
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
+
+
 
     @GetMapping("/type")
     public List<TransactionDTO> getAllTransactions() {
