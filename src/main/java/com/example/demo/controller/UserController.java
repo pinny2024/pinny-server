@@ -54,6 +54,7 @@ public class UserController {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("message", "이미 가입된 이메일 주소입니다.");
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+
         }
 
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
