@@ -2,6 +2,7 @@ package com.example.demo.domain;
 
 import com.example.demo.domain.Category;
 import com.example.demo.domain.Type;
+import com.example.demo.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -9,11 +10,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "transactions") // 테이블 이름 지정
+@Table(name = "transactions")
 @EntityListeners(AuditingEntityListener.class)
 public class Transaction {
 
@@ -37,4 +39,8 @@ public class Transaction {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
