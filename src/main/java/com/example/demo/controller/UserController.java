@@ -113,16 +113,50 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
-        User updatedUser = userService.updateUser(userId, userDTO);
-        if (updatedUser != null) {
-            // 사용자 ID가 포함된 응답 메시지 반환
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", userId + " 계정이 수정되었습니다.");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
+    @PutMapping("/nickname/{userId}")
+    public ResponseEntity<Map<String, Object>> updateUser(
+            @PathVariable Long userId,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "career", required = false) String career) {
+
+        User user = userService.getUserById(userId);
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        // 프로필 이미지 업로드 처리
+//        if (file != null) {
+//            // 프로필 이미지 업로드 처리 코드
+//        }
+
+        // 닉네임과 직업 업데이트
+        if (nickname != null && !nickname.equals(user.getNickname())) {
+            user.setNickname(nickname);
+        } else if (nickname != null) {
+            // 동일한 닉네임이 이미 존재하는 경우
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "동일한 닉네임이 이미 존재합니다. 다른 닉네임을 입력하세요.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        if (career != null && !career.equals(user.getCareer())) {
+            user.setCareer(career);
+        } else if (career != null) {
+            // 동일한 직업이 이미 존재하는 경우
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "동일한 직업이 이미 존재합니다. 다른 직업을 입력하세요.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        User updatedUser = userService.updateUser(user);
+        if (updatedUser != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "계정이 수정되었습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+
 }
