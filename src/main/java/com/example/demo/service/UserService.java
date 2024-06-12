@@ -36,7 +36,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
     public User login(String email, String password) {
         return userRepository.findByEmailAndPassword(email, password).orElse(null);
     }
@@ -53,12 +52,8 @@ public class UserService {
         return false;
     }
 
-    public User updateUser(Long userId, UserDTO userDTO) {
-        User user = userRepository.findById(userId).orElse(null);
+    public User updateUser(User user) {
         if (user != null) {
-            user.setEmail(userDTO.getEmail());
-            user.setPassword(userDTO.getPassword());
-            user.setProfile(userDTO.getProfile());
             return userRepository.save(user);
         }
         return null;
