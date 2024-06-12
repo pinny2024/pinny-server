@@ -152,7 +152,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<String> deleteUser(@PathVariable("user_id") Long userId) {
         boolean deleted = userService.deleteUser(userId);
         if (deleted) {
             return new ResponseEntity<>("탈퇴가 완료되었습니다.", HttpStatus.OK);
@@ -163,7 +163,7 @@ public class UserController {
 
     @PutMapping("/nickname/{userId}")
     public ResponseEntity<Map<String, Object>> updateUser(
-            @PathVariable Long userId,
+            @PathVariable("user_id") Long userId,
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "nickname", required = false) String nickname,
             @RequestParam(value = "career", required = false) String career) {
@@ -208,7 +208,7 @@ public class UserController {
 
     @PutMapping("/email/{userId}")
     public ResponseEntity<Map<String, Object>> updateEmail(
-            @PathVariable Long userId,
+            @PathVariable("user_id") Long userId,
             @RequestBody Map<String, String> requestBody) {
 
         // 사용자 정보 조회
@@ -255,7 +255,7 @@ public class UserController {
 
     @PutMapping("/password/{userId}")
     public ResponseEntity<Map<String, Object>> updatePassword(
-            @PathVariable Long userId,
+            @PathVariable("user_id") Long userId,
             @RequestBody Map<String, String> requestBody) {
 
         // 사용자 정보 조회
