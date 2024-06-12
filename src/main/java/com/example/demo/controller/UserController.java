@@ -158,5 +158,45 @@ public class UserController {
         }
     }
 
+    @PutMapping("/email/{userId}")
+    public ResponseEntity<Map<String, Object>> updateEmail(
+            @PathVariable Long userId,
+            @RequestBody Map<String, String> requestBody) {
+
+        // 사용자 정보 조회
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // 새 이메일 추출
+        String newEmail = requestBody.get("email");
+
+        // 입력한 새 이메일과 기존 이메일이 같은지 확인
+        if (newEmail.equals(user.getEmail())) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "새 이메일이 현재 이메일과 동일합니다.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        // 새 이메일이 이미 존재하는지 확인
+        if (userService.existsByEmail(newEmail)) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "이미 사용 중인 이메일 주소입니다.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        // 이메일 업데이트
+        user.setEmail(newEmail);
+        User updatedUser = userService.updateUser(user);
+        if (updatedUser != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "이메일이 수정되었습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }
