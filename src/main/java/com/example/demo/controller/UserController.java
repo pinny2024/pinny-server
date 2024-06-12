@@ -33,12 +33,27 @@ public class UserController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
+            @RequestParam("passwordConfirm") String passwordConfirm,
             @RequestParam("nickname") String nickname,
             @RequestParam("career") String career,
             @RequestParam("salary") Integer salary,
             @RequestParam("saving") Integer saving,
             @RequestParam("ageRange") Integer ageRange,
             @RequestParam("introduction") String introduction) {
+
+        // 비밀번호 조건 확인
+        if (!isValidPassword(password)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "조건에 맞지 않는 비밀번호입니다. 영어, 숫자, 특수문자를 조합하여 10글자 이상으로 설정해주세요.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        // 비밀번호 재확인
+        if (!password.equals(passwordConfirm)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "일치하지 않는 비밀번호입니다. 다시 입력해주세요.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
 
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(email);
@@ -78,6 +93,16 @@ public class UserController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    private boolean isValidPassword(String password) {
+        return password.length() >= 10 && containsLetter(password) && containsNumber(password) && containsSpecialCharacter(password);
+    }
+
+    private boolean containsLetter(String password) {
+        // 영어 포함 여부 확인
+        return password.matches(".*[a-zA-Z].*");
+    }
+
 
 
     @PostMapping("/login")
@@ -242,9 +267,6 @@ public class UserController {
         }
     }
 
-    private boolean isValidPassword(String password) {
-        return password.length() >= 10 && containsNumber(password) && containsSpecialCharacter(password);
-    }
 
     private boolean containsNumber(String password) {
         // 숫자 포함 여부 확인
