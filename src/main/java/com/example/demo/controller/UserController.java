@@ -198,5 +198,62 @@ public class UserController {
         }
     }
 
+    @PutMapping("/password/{userId}")
+    public ResponseEntity<Map<String, Object>> updatePassword(
+            @PathVariable Long userId,
+            @RequestBody Map<String, String> requestBody) {
+
+        // 사용자 정보 조회
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // 현재 비밀번호 확인
+        String currentPassword = requestBody.get("currentPassword");
+        if (!currentPassword.equals(user.getPassword())) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "현재 비밀번호가 올바르지 않습니다. 다시 입력해주세요.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        // 새 비밀번호 확인 및 유효성 검사
+        String newPassword = requestBody.get("newPassword");
+        if (newPassword.equals(currentPassword)) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "변경 비밀번호가 현재 비밀번호와 같습니다.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        if (!isValidPassword(newPassword)) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "적합하지 않은 비밀번호입니다. 숫자와 특수기호를 포함하여 10글자 이상 입력해주세요.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        // 비밀번호 업데이트
+        user.setPassword(newPassword);
+        User updatedUser = userService.updateUser(user);
+        if (updatedUser != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "비밀번호가 변경되었습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private boolean isValidPassword(String password) {
+        return password.length() >= 10 && containsNumber(password) && containsSpecialCharacter(password);
+    }
+
+    private boolean containsNumber(String password) {
+        // 숫자 포함 여부 확인
+        return password.matches(".*\\d.*");
+    }
+
+    private boolean containsSpecialCharacter(String password) {
+        // 특수기호 포함 여부 확인
+        return !password.matches("[A-Za-z0-9 ]*");
+    }
 
 }
