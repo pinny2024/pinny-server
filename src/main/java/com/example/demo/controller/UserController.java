@@ -3,14 +3,16 @@ package com.example.demo.controller;
 import com.example.demo.domain.User;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Validated
 public class UserController {
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -28,6 +31,14 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    //이메일 유효
+    private boolean isValidEmail(String email) {
+        return email.matches("^[_a-zA-Z0-9-]+(.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*(.[a-zA-Z]{2,})$");
+    }
+
+
+
+   //회원가입
     @PostMapping("/join")
     public ResponseEntity<Map<String, Object>> joinUser(
             @RequestParam("file") MultipartFile file,
@@ -41,19 +52,51 @@ public class UserController {
             @RequestParam("ageRange") Integer ageRange,
             @RequestParam("introduction") String introduction) {
 
-        // 비밀번호 조건 확인
+        // 이메일 입력했는지 확인
+        if (StringUtils.isEmpty(email)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "이메일을 입력해주세요.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        // 올바른 형식인지 확인
+        if (!isValidEmail(email)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "올바른 이메일 형식이 아닙니다.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        // 조건에 맞는 비밀번호인지 확인
         if (!isValidPassword(password)) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("message", "조건에 맞지 않는 비밀번호입니다. 영어, 숫자, 특수문자를 조합하여 10글자 이상으로 설정해주세요.");
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
 
-        // 비밀번호 재확인
+        // 입력한 비밀번호와 맞는지 확인
         if (!password.equals(passwordConfirm)) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("message", "일치하지 않는 비밀번호입니다. 다시 입력해주세요.");
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
+
+        // 이미 있는 이메일인지 확인
+        if (userService.existsByEmail(email)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "이미 가입된 이메일 주소입니다.");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        // 사진 저장
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String filePath = uploadDir + "/" + fileName;
+        try {
+            Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
 
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(email);
@@ -64,23 +107,9 @@ public class UserController {
         userDTO.setSaving(saving);
         userDTO.setAgeRange(ageRange);
         userDTO.setIntroduction(introduction);
-
-        if (userService.existsByEmail(userDTO.getEmail())) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "이미 가입된 이메일 주소입니다.");
-            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-
-        }
-
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String filePath = uploadDir + "/" + fileName;
-        try {
-            Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace(); // 에러 처리 필요
-        }
-
         userDTO.setProfile(filePath);
+
+
         User savedUser = userService.saveUser(userDTO);
         if (savedUser != null) {
             Map<String, Object> response = new HashMap<>();
@@ -94,16 +123,10 @@ public class UserController {
         }
     }
 
-    private boolean isValidPassword(String password) {
-        return password.length() >= 10 && containsLetter(password) && containsNumber(password) && containsSpecialCharacter(password);
-    }
-
     private boolean containsLetter(String password) {
         // 영어 포함 여부 확인
         return password.matches(".*[a-zA-Z].*");
     }
-
-
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
@@ -204,6 +227,13 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
+        // 새 이메일이 올바른 형식인지 확인
+        if (!newEmail.matches("^[_a-zA-Z0-9-]+(.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*(.[a-zA-Z]{2,})$")) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "올바른 이메일 형식이 아닙니다.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
         // 새 이메일이 이미 존재하는지 확인
         if (userService.existsByEmail(newEmail)) {
             Map<String, Object> response = new HashMap<>();
@@ -267,6 +297,9 @@ public class UserController {
         }
     }
 
+    private boolean isValidPassword(String password) {
+        return password.length() >= 10 && containsLetter(password) && containsNumber(password) && containsSpecialCharacter(password);
+    }
 
     private boolean containsNumber(String password) {
         // 숫자 포함 여부 확인
@@ -275,7 +308,6 @@ public class UserController {
 
     private boolean containsSpecialCharacter(String password) {
         // 특수기호 포함 여부 확인
-        return !password.matches("[A-Za-z0-9 ]*");
+        return password.matches(".*[!@#$%^&*()].*");
     }
-
 }
