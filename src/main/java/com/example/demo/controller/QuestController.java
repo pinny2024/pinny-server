@@ -28,16 +28,29 @@ public class QuestController {
     private final QuestService questService;
 
     @PostMapping
-    public ResponseEntity<QuestResponse> addQuest(@RequestBody AddQuestRequest request) {
+    public ResponseEntity<Map<String, Object>> addQuest(@RequestBody AddQuestRequest request) {
+
+        List<Quest> quests = questService.findAllByUserId(request.getUserId());
+
+        Map<String, Object> response = new HashMap<>();
+
+        if ( quests.size() >= 1 ) {
+            response.put("message", "퀘스트가 1개 이상 있어서 더 이상의 추가가 불가합니다.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
         Quest savedQuest = questService.save(request);
 
         if (savedQuest.getQuest() == null || savedQuest.getQuest().trim().isEmpty()) {
+            response.put("message", "퀘스트가 빈칸입니다.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);  // BAD REQUEST 상태 코드 반환
+                    .body(response);  // BAD REQUEST 상태 코드 반환
         }
 
+        response.put("data", new QuestResponse(savedQuest));
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new QuestResponse(savedQuest));
+                .body(response);
     }
 
     // 이전의 3개 퀘스트 가져오기
