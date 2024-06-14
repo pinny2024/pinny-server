@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -101,7 +100,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 카테고리에 대한 값이 없거나 사용자의 거래 정보가 없습니다.");
         }
 
-        List<TransactionDTO> dtos = transactions.stream()
+        Map<LocalDate, List<TransactionDTO>> groupedTransactions = transactions.stream()
                 .map(transaction -> {
                     TransactionDTO dto = new TransactionDTO();
                     dto.setAmount(transaction.getAmount());
@@ -111,8 +110,17 @@ public class TransactionController {
                     dto.setCreatedAt(transaction.getCreatedAt());
                     return dto;
                 })
+                .collect(Collectors.groupingBy(dto -> dto.getCreatedAt().toLocalDate()));
+
+        List<Map<String, Object>> response = groupedTransactions.entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> groupedData = new LinkedHashMap<>();
+                    groupedData.put("createdAt", entry.getKey().toString());
+                    groupedData.put("transactions", entry.getValue());
+                    return groupedData;
+                })
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
