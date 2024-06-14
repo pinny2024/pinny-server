@@ -10,5 +10,5 @@ public class TransactionDTO {
     private String category;
     private String description;
     private String type;
-    private LocalDateTime createdAt;
+    //private LocalDateTime createdAt;
 }

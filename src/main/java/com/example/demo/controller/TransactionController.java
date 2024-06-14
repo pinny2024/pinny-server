@@ -47,7 +47,6 @@ public class TransactionController {
         dto.setCategory(savedTransaction.getCategory().name());
         dto.setDescription(savedTransaction.getDescription());
         dto.setType(savedTransaction.getType().name());
-        dto.setCreatedAt(savedTransaction.getCreatedAt());
 
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
@@ -64,16 +63,15 @@ public class TransactionController {
         }
 
         Map<LocalDate, List<TransactionDTO>> groupedTransactions = transactions.stream()
-                .map(transaction -> {
-                    TransactionDTO dto = new TransactionDTO();
-                    dto.setAmount(transaction.getAmount());
-                    dto.setCategory(transaction.getCategory().name());
-                    dto.setDescription(transaction.getDescription());
-                    dto.setType(transaction.getType().name());
-                    dto.setCreatedAt(transaction.getCreatedAt());
-                    return dto;
-                })
-                .collect(Collectors.groupingBy(dto -> dto.getCreatedAt().toLocalDate()));
+                .collect(Collectors.groupingBy(transaction -> transaction.getCreatedAt().toLocalDate(),
+                        Collectors.mapping(transaction -> {
+                            TransactionDTO dto = new TransactionDTO();
+                            dto.setAmount(transaction.getAmount());
+                            dto.setCategory(transaction.getCategory().name());
+                            dto.setDescription(transaction.getDescription());
+                            dto.setType(transaction.getType().name());
+                            return dto;
+                        }, Collectors.toList())));
 
         List<Map<String, Object>> response = groupedTransactions.entrySet().stream()
                 .map(entry -> {
@@ -101,16 +99,15 @@ public class TransactionController {
         }
 
         Map<LocalDate, List<TransactionDTO>> groupedTransactions = transactions.stream()
-                .map(transaction -> {
-                    TransactionDTO dto = new TransactionDTO();
-                    dto.setAmount(transaction.getAmount());
-                    dto.setCategory(transaction.getCategory().name());
-                    dto.setDescription(transaction.getDescription());
-                    dto.setType(transaction.getType().name());
-                    dto.setCreatedAt(transaction.getCreatedAt());
-                    return dto;
-                })
-                .collect(Collectors.groupingBy(dto -> dto.getCreatedAt().toLocalDate()));
+                .collect(Collectors.groupingBy(transaction -> transaction.getCreatedAt().toLocalDate(),
+                        Collectors.mapping(transaction -> {
+                            TransactionDTO dto = new TransactionDTO();
+                            dto.setAmount(transaction.getAmount());
+                            dto.setCategory(transaction.getCategory().name());
+                            dto.setDescription(transaction.getDescription());
+                            dto.setType(transaction.getType().name());
+                            return dto;
+                        }, Collectors.toList())));
 
         List<Map<String, Object>> response = groupedTransactions.entrySet().stream()
                 .map(entry -> {
