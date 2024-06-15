@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.Category;
+import com.example.demo.domain.Quest;
 import com.example.demo.domain.Transaction;
 import com.example.demo.domain.User;
 import com.example.demo.dto.TransactionDTO;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.QuestService;
 import com.example.demo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,11 +27,13 @@ public class TransactionController {
 
     private final TransactionService transactionService;
     private final UserRepository userRepository;
+    private final QuestService questService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService, UserRepository userRepository) {
+    public TransactionController(TransactionService transactionService, UserRepository userRepository, QuestService questService) {
         this.transactionService = transactionService;
         this.userRepository = userRepository;
+        this.questService = questService;
     }
 
     @PostMapping
@@ -39,6 +43,15 @@ public class TransactionController {
 
         transaction.setUser(user);
         transaction.setCreatedAt(LocalDateTime.now());
+
+        if (transaction.getCategory() == Category.저축) {
+            List<Quest> quests = questService.findAllByUserId(userId);
+            if (!quests.isEmpty()) {
+                transaction.setQuest(quests.get(0));
+            }
+        } else {
+            transaction.setQuest(null);
+        }
 
         Transaction savedTransaction = transactionService.saveTransaction(transaction);
 
@@ -86,16 +99,14 @@ public class TransactionController {
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<?> getTransactionsByCategoryAndUserId(@PathVariable("userId") Long userId,
-                                                                @PathVariable("category") String category) {
+    public ResponseEntity<?> getTransactionsByCategory(@PathVariable("userId") Long userId, @PathVariable("category") Category category) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
-        Category cat = Category.valueOf(category);
-        List<Transaction> transactions = transactionService.getTransactionsByUserIdAndCategory(userId, cat);
+        List<Transaction> transactions = transactionService.getTransactionsByUserIdAndCategory(userId, category);
 
         if (transactions.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 카테고리에 대한 값이 없거나 사용자의 거래 정보가 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 카테고리의 거래 정보가 없습니다.");
         }
 
         Map<LocalDate, List<TransactionDTO>> groupedTransactions = transactions.stream()
@@ -120,4 +131,32 @@ public class TransactionController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/저축/{questId}")
+    public ResponseEntity<?> getSavingsTransactionsByQuestId(@PathVariable("userId") Long userId, @PathVariable("questId") Long questId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        List<Transaction> transactions = transactionService.getTransactionsByUserId(userId).stream()
+                .filter(transaction -> transaction.getCategory() == Category.저축 && transaction.getQuest() != null && transaction.getQuest().getId().equals(questId))
+                .collect(Collectors.toList());
+
+        if (transactions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 퀘스트의 저축 거래 정보가 없습니다.");
+        }
+
+        List<TransactionDTO> response = transactions.stream()
+                .map(transaction -> {
+                    TransactionDTO dto = new TransactionDTO();
+                    dto.setAmount(transaction.getAmount());
+                    dto.setCategory(transaction.getCategory().name());
+                    dto.setDescription(transaction.getDescription());
+                    dto.setType(transaction.getType().name());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
