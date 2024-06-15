@@ -1,8 +1,5 @@
 package com.example.demo.domain;
 
-import com.example.demo.domain.Category;
-import com.example.demo.domain.Type;
-import com.example.demo.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -41,6 +38,10 @@ public class Transaction {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quest_id", nullable = true)
+    private Quest quest;
 }
