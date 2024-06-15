@@ -7,19 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public List<Transaction> getTransactionsByUserIdAndCategory(Long userId, Category category) {
-        return transactionRepository.findByUser_IdAndCategory(userId, category);
-    }
     @Autowired
     public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
+    }
+
+    public List<Transaction> getTransactionsByUserIdAndCategory(Long userId, Category category) {
+        return transactionRepository.findByUser_IdAndCategory(userId, category);
+    }
+
+    public List<Transaction> getTransactionsByUserIdAndQuestId(Long userId, Long questId) {
+        return transactionRepository.findByUser_IdAndQuest_Id(userId, questId);
     }
 
     public List<Transaction> getTransactionsByCategory(Category category) {
