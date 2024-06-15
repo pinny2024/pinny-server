@@ -1,10 +1,12 @@
 package com.example.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,6 +44,11 @@ public class Quest extends BaseTimeEntity{
     @Column(name = "endTime")
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "quest",  cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
+    private List<Transaction> transactions;
 
     public void update(QuestCategory category, String quest, Integer price, LocalDateTime endTime) {
         this.category = category;
