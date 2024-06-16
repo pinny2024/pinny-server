@@ -36,7 +36,7 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    public Plan findById(Long id){
+    public Plan findById(Long id) {
         return planRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
     }
@@ -46,7 +46,7 @@ public class PlanService {
     }
 
     @Transactional
-    public Plan update(Long id, UpdatePlanRequest request){
+    public Plan update(Long id, UpdatePlanRequest request) {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found " + id));
 
@@ -71,19 +71,18 @@ public class PlanService {
                 .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
 
         if (plan.getCreatedAt().isBefore(LocalDateTime.now().minusWeeks(1))) {
-            plan.setIsClosed(true);// plan이 생성된지 일주일이 넘었다면 plan 종료
+            plan.setIsClosed(true);
         } else {
             try {
                 plan.check();
             } catch (IllegalStateException e) {
                 throw new PlanCheckException("Unable to check the plan: " + e.getMessage());
-            }// 일주일이 넘지 않았다면 check 상태 업데이트
+            }
         }
 
-        return plan;// 업데이트된 plan 반환
+        return plan;
     }
 
-    // 하루가 지나면 isChecked false로 변경
     @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
     @Transactional
     public void resetIsCheckedDaily() {

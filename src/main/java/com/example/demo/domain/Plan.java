@@ -55,15 +55,25 @@ public class Plan extends BaseTimeEntity {
         if (isClosed) {
             throw new IllegalStateException("Plan is closed and cannot be checked.");
         }
-        if (checkNum >= 7) {
-            throw new IllegalStateException("Check number cannot exceed 7.");
+
+        LocalDateTime now = LocalDateTime.now();
+        if (isChecked) {
+            if (checkNum > 0) {
+                checkNum--;
+            }
+            isChecked = false;
+            lastCheckedAt = now.minusDays(1);
+        } else {
+            if (checkNum >= 7) {
+                throw new IllegalStateException("Check number cannot exceed 7.");
+            }
+            if (lastCheckedAt != null && lastCheckedAt.toLocalDate().isEqual(now.toLocalDate())) {
+                throw new IllegalStateException("Can only check once per day.");
+            }
+            checkNum++;
+            isChecked = true;
+            lastCheckedAt = now;
         }
-        if (lastCheckedAt != null && lastCheckedAt.toLocalDate().isEqual(LocalDateTime.now().toLocalDate())) {
-            throw new IllegalStateException("Can only check once per day.");
-        }
-        checkNum++;
-        isChecked = true;
-        lastCheckedAt = LocalDateTime.now();
     }
 
     public Boolean getIsChecked() {
