@@ -11,17 +11,20 @@ public class PlanResponse {
     private Long userId;
     private String plan;
     private String image;
+    private Integer checkNum;
     private Boolean isChecked;
+    private Boolean isClosed;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public PlanResponse(Plan plan) {
-        System.out.println(plan);
         this.id = plan.getId();
         this.userId = plan.getUser().getId();
         this.plan = plan.getPlan();
         this.image = plan.getImage();
-        this.isChecked = plan.isChecked(); // Change this line to use isChecked()
+        this.checkNum = plan.getCheckNum();
+        this.isChecked = plan.getIsChecked();
+        this.isClosed = plan.getIsClosed();
         this.createdAt = plan.getCreatedAt();
         this.updatedAt = plan.getUpdatedAt();
     }
