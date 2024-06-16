@@ -1,6 +1,5 @@
 package com.example.demo.dto.plan;
 
-import com.example.demo.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,8 @@ import java.time.LocalDateTime;
 public class UpdatePlanRequest {
     private String plan;
     private String image;
+    private Integer checkNum;
     private Boolean isChecked;
+    private Boolean isClosed;
     private LocalDateTime date;
 }
