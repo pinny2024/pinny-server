@@ -12,6 +12,7 @@ import lombok.*;
 @Setter
 @Builder
 @Table(name = "plans")
+@ToString
 public class Plan extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class Plan extends BaseTimeEntity {
     @Column(name = "image")
     private String image;
 
-    @Column(name = "isChecked")
+    @Column(name = "is_checked")
     @Builder.Default
     private boolean isChecked = false;
 
@@ -38,7 +39,9 @@ public class Plan extends BaseTimeEntity {
         this.isChecked = isChecked != null ? isChecked : false;
     }
 
+    /*
     public Boolean getIsChecked() {
         return false;
-    }
+    }*/
+
 }
