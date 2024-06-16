@@ -16,9 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -87,6 +85,7 @@ public class TransactionController {
                         }, Collectors.toList())));
 
         List<Map<String, Object>> response = groupedTransactions.entrySet().stream()
+                .sorted(Map.Entry.<LocalDate, List<TransactionDTO>>comparingByKey().reversed())
                 .map(entry -> {
                     Map<String, Object> groupedData = new LinkedHashMap<>();
                     groupedData.put("createdAt", entry.getKey().toString());
@@ -121,6 +120,7 @@ public class TransactionController {
                         }, Collectors.toList())));
 
         List<Map<String, Object>> response = groupedTransactions.entrySet().stream()
+                .sorted(Map.Entry.<LocalDate, List<TransactionDTO>>comparingByKey().reversed())
                 .map(entry -> {
                     Map<String, Object> groupedData = new LinkedHashMap<>();
                     groupedData.put("createdAt", entry.getKey().toString());
