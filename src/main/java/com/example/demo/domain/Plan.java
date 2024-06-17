@@ -1,9 +1,9 @@
 package com.example.demo.domain;
 
-import com.example.demo.domain.BaseTimeEntity;
-import com.example.demo.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +12,6 @@ import lombok.*;
 @Setter
 @Builder
 @Table(name = "plans")
-@ToString
 public class Plan extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,19 +28,63 @@ public class Plan extends BaseTimeEntity {
     @Column(name = "image")
     private String image;
 
-    @Column(name = "is_checked")
+    @Column(name = "checkNum")
     @Builder.Default
-    private boolean isChecked = false;
+    private Integer checkNum = 0;
 
-    public void update(String plan, String image, Boolean isChecked) {
+    @Column(name = "isChecked")
+    @Builder.Default
+    private Boolean isChecked = false;
+
+    @Column(name = "isClosed")
+    @Builder.Default
+    private Boolean isClosed = false;
+
+    @Column(name = "lastCheckedAt")
+    private LocalDateTime lastCheckedAt;
+
+    public void update(String plan, String image, Integer checkNum, Boolean isChecked, Boolean isClosed) {
         this.plan = plan;
         this.image = image;
+        this.checkNum = checkNum;
         this.isChecked = isChecked != null ? isChecked : false;
+        this.isClosed = isClosed != null ? isClosed : false;
     }
 
-    /*
-    public Boolean getIsChecked() {
-        return false;
-    }*/
+    public void check() {
+        if (isClosed) {
+            throw new IllegalStateException("Plan is closed and cannot be checked.");
+        }
 
+        LocalDateTime now = LocalDateTime.now();
+        if (isChecked) {
+            if (checkNum > 0) {
+                checkNum--;
+            }
+            isChecked = false;
+            lastCheckedAt = now.minusDays(1);
+        } else {
+            if (checkNum >= 7) {
+                throw new IllegalStateException("Check number cannot exceed 7.");
+            }
+            if (lastCheckedAt != null && lastCheckedAt.toLocalDate().isEqual(now.toLocalDate())) {
+                throw new IllegalStateException("Can only check once per day.");
+            }
+            checkNum++;
+            isChecked = true;
+            lastCheckedAt = now;
+        }
+    }
+
+    public Boolean getIsChecked() {
+        return this.isChecked;
+    }
+
+    public Boolean getIsClosed() {
+        return this.isClosed;
+    }
+
+    public Integer getCheckNum() {
+        return this.checkNum;
+    }
 }

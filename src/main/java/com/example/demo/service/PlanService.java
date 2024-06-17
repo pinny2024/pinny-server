@@ -4,15 +4,16 @@ import com.example.demo.domain.Plan;
 import com.example.demo.domain.User;
 import com.example.demo.dto.plan.AddPlanRequest;
 import com.example.demo.dto.plan.UpdatePlanRequest;
+import com.example.demo.exception.PlanCheckException;
 import com.example.demo.repository.PlanRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,10 +36,9 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    //블로그 글 하나 조회( 데이터베이스 id 이용해 글 조회 )
-    public Plan findById(Long id){
+    public Plan findById(Long id) {
         return planRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("not found: "+id));
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
     }
 
     public List<Plan> findAllPlansByUserId(Long userId) {
@@ -46,18 +46,52 @@ public class PlanService {
     }
 
     @Transactional
-    public Plan update(Long id, UpdatePlanRequest request){
+    public Plan update(Long id, UpdatePlanRequest request) {
         Plan plan = planRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("not found "+id));
+                .orElseThrow(() -> new IllegalArgumentException("not found " + id));
 
         plan.update(
                 request.getPlan(),
                 request.getImage(),
-                request.getIsChecked()
+                request.getCheckNum(),
+                request.getIsChecked(),
+                request.getIsClosed()
         );
 
         return plan;
     }
 
-    public void delete(Long id) { planRepository.deleteById(id); }
+    public void delete(Long id) {
+        planRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Plan checkPlan(Long id) {
+        Plan plan = planRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+
+        if (plan.getCreatedAt().isBefore(LocalDateTime.now().minusWeeks(1))) {
+            plan.setIsClosed(true);
+        } else {
+            try {
+                plan.check();
+            } catch (IllegalStateException e) {
+                throw new PlanCheckException("Unable to check the plan: " + e.getMessage());
+            }
+        }
+
+        return plan;
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
+    @Transactional
+    public void resetIsCheckedDaily() {
+        List<Plan> plans = planRepository.findAll();
+        for (Plan plan : plans) {
+            if (!plan.getIsClosed() && plan.getIsChecked()) {
+                plan.setIsChecked(false);
+                planRepository.save(plan); // 변경 사항 저장
+            }
+        }
+    }
 }
