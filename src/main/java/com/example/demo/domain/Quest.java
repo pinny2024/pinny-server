@@ -45,9 +45,8 @@ public class Quest extends BaseTimeEntity{
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-
     @JsonIgnore
-    @OneToMany(mappedBy = "quest",  cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
+    @OneToMany(mappedBy = "quest", cascade = {CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
     private List<Transaction> transactions;
 
     public void update(QuestCategory category, String quest, Integer price, LocalDateTime endTime) {
