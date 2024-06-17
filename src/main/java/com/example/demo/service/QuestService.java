@@ -8,7 +8,9 @@ import com.example.demo.dto.quest.LastThreeQuestsResponse;
 import com.example.demo.dto.quest.UpdateQuestRequest;
 import com.example.demo.repository.QuestCategoryRepository;
 import com.example.demo.repository.QuestRepository;
+import com.example.demo.repository.TransactionRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.domain.Transaction;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ public class QuestService {
     private final QuestRepository questRepository;
     private final UserRepository userRepository;
     private final QuestCategoryRepository categoryRepository;
+    private final TransactionRepository transactionRepository;
 
     public Quest save(AddQuestRequest request) {
         User user = userRepository.findById(request.getUserId())
@@ -63,9 +66,20 @@ public class QuestService {
         return quest;
     }
 
+    @Transactional
     public void delete(Long id) {
+        Quest quest = questRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Quest not found: " + id));
+
+        // 거래 내역의 퀘스트 참조를 null로 설정
+        for (Transaction transaction : quest.getTransactions()) {
+            transaction.setQuest(null);
+            transactionRepository.save(transaction);
+        }
+
         questRepository.deleteById(id);
     }
+
 
     public List<LastThreeQuestsResponse> getPreviousQuests(Long userId) {
         List<Quest> quests = questRepository.findTopByUserIdOrderByStartTimeDesc(userId);
