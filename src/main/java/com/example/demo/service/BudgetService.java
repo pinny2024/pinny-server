@@ -35,6 +35,19 @@ public class BudgetService {
         return budgetRepository.save(budget);
     }
 
+    public Budget updateTotalBudget(Long userId, Integer totalBudget) {
+        Budget budget = budgetRepository.findByUser_Id(userId);
+        if (budget == null) {
+            throw new IllegalArgumentException("Budget not found");
+        }
+        if (budget.getTotalBudget().equals(totalBudget)) {
+            throw new IllegalArgumentException("새로운 예산 금액이 기존 금액과 동일합니다.");
+        }
+        budget.setTotalBudget(totalBudget);
+        budget.setRemainingBudget(totalBudget);
+        return budgetRepository.save(budget);
+    }
+
     public Budget updateRemainingBudget(Long userId) {
         Budget budget = budgetRepository.findByUser_Id(userId);
         List<Transaction> transactions = transactionService.getTransactionsByUserIdAndType(userId, Type.지출);
