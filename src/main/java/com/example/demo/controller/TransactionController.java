@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -143,6 +144,40 @@ public class TransactionController {
 
         if (transactions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 퀘스트의 저축 거래 정보가 없습니다.");
+        }
+
+        List<TransactionDTO> response = transactions.stream()
+                .map(transaction -> {
+                    TransactionDTO dto = new TransactionDTO();
+                    dto.setAmount(transaction.getAmount());
+                    dto.setCategory(transaction.getCategory().name());
+                    dto.setDescription(transaction.getDescription());
+                    dto.setType(transaction.getType().name());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/date")
+    public ResponseEntity<?> getTransactionsByDate(@PathVariable("userId") Long userId, @RequestParam("date") String dateStr) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        LocalDate date;
+        try {
+            date = LocalDate.parse(dateStr.trim()); // 개행 문자 및 공백 제거
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 날짜 형식입니다.");
+        }
+
+        List<Transaction> transactions = transactionService.getTransactionsByUserId(userId).stream()
+                .filter(transaction -> transaction.getCreatedAt().toLocalDate().equals(date))
+                .collect(Collectors.toList());
+
+        if (transactions.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 날짜의 거래 정보가 없습니다.");
         }
 
         List<TransactionDTO> response = transactions.stream()

@@ -7,6 +7,8 @@ import com.example.demo.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,5 +43,11 @@ public class TransactionService {
 
     public List<Transaction> getTransactionsByUserIdAndType(Long userId, Type type) {
         return transactionRepository.findByUser_IdAndType(userId, type);
+    }
+
+    public List<Transaction> getTransactionsByUserIdAndDate(Long userId, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        return transactionRepository.findByUser_IdAndCreatedAtBetween(userId, startOfDay, endOfDay);
     }
 }
