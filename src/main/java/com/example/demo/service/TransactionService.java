@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Category;
 import com.example.demo.domain.Transaction;
+import com.example.demo.domain.Type;
 import com.example.demo.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class TransactionService {
         return transactionRepository.findByUser_Id(userId);
     }
 
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+    public List<Transaction> getTransactionsByUserIdAndType(Long userId, Type type) {
+        return transactionRepository.findByUser_IdAndType(userId, type);
     }
 }
