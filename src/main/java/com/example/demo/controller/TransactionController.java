@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.Category;
-import com.example.demo.domain.Quest;
-import com.example.demo.domain.Transaction;
-import com.example.demo.domain.User;
+import com.example.demo.domain.*;
 import com.example.demo.dto.TransactionDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.QuestService;
@@ -194,4 +191,43 @@ public class TransactionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/expenditures/{weeks}")
+    public ResponseEntity<?> getWeeklyExpenditures(@PathVariable("userId") Long userId, @PathVariable("weeks") int weeks) {
+        if (weeks < 1 || weeks > 4) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("기간은 1주일에서 4주일 사이여야 합니다.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        LocalDateTime startDate = user.getCreatedAt().toLocalDate().atStartOfDay();
+        List<List<Map<String, Object>>> response = new ArrayList<>();
+
+        for (int i = 0; i < weeks; i++) {
+            LocalDateTime weekStartDate = startDate.plusWeeks(i);
+            LocalDateTime weekEndDate = startDate.plusWeeks(i + 1);
+
+            List<Transaction> transactions = transactionService.getTransactionsByUserIdAndType(userId, Type.지출).stream()
+                    .filter(transaction -> !transaction.getCreatedAt().isBefore(weekStartDate) && transaction.getCreatedAt().isBefore(weekEndDate))
+                    .collect(Collectors.toList());
+
+            Map<Category, Double> expenditureSumByCategory = transactions.stream()
+                    .filter(transaction -> transaction.getCategory() != Category.저축)
+                    .collect(Collectors.groupingBy(Transaction::getCategory, Collectors.summingDouble(transaction -> transaction.getAmount().doubleValue())));
+
+            List<Map<String, Object>> weekData = expenditureSumByCategory.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue())
+                    .map(entry -> {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("category", entry.getKey().name());
+                        data.put("expenditureSum", entry.getValue());
+                        return data;
+                    })
+                    .collect(Collectors.toList());
+
+            response.add(weekData);
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
