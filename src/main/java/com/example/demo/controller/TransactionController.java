@@ -38,7 +38,9 @@ public class TransactionController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
         transaction.setUser(user);
-        transaction.setCreatedAt(LocalDateTime.now());
+        if (transaction.getCreatedAt() == null) {
+            transaction.setCreatedAt(LocalDateTime.now());
+        }
 
         if (transaction.getCategory() == Category.저축) {
             List<Quest> quests = questService.findAllByUserId(userId);
@@ -59,6 +61,7 @@ public class TransactionController {
 
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/type")
     public ResponseEntity<?> getAllTransactionsByUserId(@PathVariable("userId") Long userId) {
