@@ -2,7 +2,7 @@ package com.example.demo.dto;
 
 import lombok.Data;
 import java.math.BigDecimal;
-import java.time.LocalDateTime; // LocalDateTime 임포트 추가
+import java.time.LocalDateTime;
 
 @Data
 public class TransactionDTO {
@@ -10,5 +10,5 @@ public class TransactionDTO {
     private String category;
     private String description;
     private String type;
-    //private LocalDateTime createdAt;
+
 }
