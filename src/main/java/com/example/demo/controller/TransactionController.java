@@ -13,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,7 +41,10 @@ public class TransactionController {
 
         transaction.setUser(user);
         if (transaction.getCreatedAt() == null) {
-            transaction.setCreatedAt(LocalDateTime.now());
+            // 한국 표준시로 현재 시간 설정
+            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
+            ZonedDateTime koreaNow = ZonedDateTime.now(koreaZoneId);
+            transaction.setCreatedAt(koreaNow.toLocalDateTime());
         }
 
         if (transaction.getCategory() == Category.저축) {
@@ -61,6 +66,7 @@ public class TransactionController {
 
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
+
 
 
     @GetMapping("/type")
